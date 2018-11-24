@@ -11,24 +11,30 @@ class Symbol {
 
 public /* types */:
 
-  enum ValueType {
-    VALUE_NONE,
-    VALUE_VOID,
-    VALUE_INT,
-    VALUE_DOUBLE,
-    VALUE_STRING,
-    VALUE_CHAR
-  };
+    enum ValueType {
+        VALUE_NONE,
+        VALUE_VOID,
+        VALUE_INT,
+        VALUE_DOUBLE,
+        VALUE_STRING,
+        VALUE_CHAR
+    };
+
+    enum SymbolType {
+        SYMBOL_CONSTANT,
+        SYMBOL_VARIABLE,
+        SYMBOL_CALLABLE,
+    };
 
 public:
 
-  ValueType type;
-  string value;
-  bool isConstant;
+    ValueType type;
+    string value;
+    SymbolType symbolType;
 
-protected:
+    protected:
 
-  Symbol(ValueType type, string value, bool isConstant);
+        Symbol(ValueType type, string value, SymbolType symbolType);
 
 };
 
@@ -36,16 +42,25 @@ class Constant : public Symbol {
 
 public:
 
-  Constant(ValueType type, string value);
+    Constant(ValueType type, string value);
 
 };
 
 class Variable : public Symbol {
 
 public:
-  
-  Variable(ValueType type, string value);
+
+    Variable(ValueType type, string value);
 
 };
+
+class Callable : public Symbol {
+
+public:
+
+    Callable(ValueType type, string value);
+
+};
+
 
 #endif // + SYMBOL_H

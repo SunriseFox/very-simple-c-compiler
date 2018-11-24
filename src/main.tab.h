@@ -106,7 +106,9 @@ extern int yydebug;
     IDENTIFIER = 316,
     LB = 317,
     RB = 318,
-    IFX = 319
+    IFX = 319,
+    UMINUS = 320,
+    UADD = 321
   };
 #endif
 /* Tokens.  */
@@ -172,6 +174,8 @@ extern int yydebug;
 #define LB 317
 #define RB 318
 #define IFX 319
+#define UMINUS 320
+#define UADD 321
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -184,7 +188,7 @@ union YYSTYPE
   Symbol *symbol;
   TreeNode *node;
 
-#line 188 "src/main.tab.h" /* yacc.c:1909  */
+#line 192 "src/main.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

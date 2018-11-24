@@ -48,6 +48,12 @@ StatementNode::StatementNode(int lineno, StatementType type, std::initializer_li
         this->addChild(elem);
 }
 
+FuncStatementNode::FuncStatementNode(int lineno, Callable *symbol, std::initializer_list<TreeNode*> children) : StatementNode (lineno, ST_FUNCTION, children)
+{
+    this->symbol = symbol;
+}
+
+
 DeclarationNode::DeclarationNode(int lineno, Symbol *symbol)
     : TreeNode(lineno, NODE_DECLARATION)
 {
@@ -88,6 +94,8 @@ string OperatorNode::getTypeStr(OperatorNode::OperatorType type)
 
     case OP_ADD: return "+";
     case OP_SUB: return "-";
+    case OP_UADD: return "+";
+    case OP_USUB: return "-";
 
     case OP_BAND: return "&";
     case OP_BXOR: return "^";

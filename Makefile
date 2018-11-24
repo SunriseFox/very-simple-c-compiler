@@ -19,7 +19,7 @@ yacc: src/main.tab.c
 main: src/pch.h.gch
 	$(CC) $(CFLAGS) $(shell ls ./src/*.cpp) -o main
 
-.PHONY: all clean	run lex yacc main test
+.PHONY: all clean	run lex yacc main test debug
 
 run: lex yacc main
 
@@ -28,3 +28,7 @@ clean:
 
 test: ./main
 	./main test.txt > result.txt
+
+debug: lex
+	bison -o src/main.tab.cpp --defines=src/main.tab.h -vy src/main.y --debug --report=all
+	$(CC) $(CFLAGS) $(shell ls ./src/*.cpp) -o main

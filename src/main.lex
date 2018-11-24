@@ -15,8 +15,8 @@ WHILTESPACE [\s\t ]
 
 CHAR \'.+\'
 STRING \".+\"
-INT (\+|-)?[0-9]+
-DOUBLE (\+|-)?[0-9]+(\.[0-9]+)?([eE](\+|-)?[0-9]+)?
+INT [0-9]+
+DOUBLE ([0-9]+)?(\.[0-9]+)([eE](\+|-)?[0-9]+)?
 
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 

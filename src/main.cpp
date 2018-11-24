@@ -31,6 +31,10 @@ void showTree(TreeNode* root) {
       case StatementNode::ST_FOR:
           cout << "For";
           break;
+      case StatementNode::ST_FUNCTION:
+          cout << "Function<";
+          cout << static_cast<FuncStatementNode*>(root)->symbol->value << ">";
+          break;
       case StatementNode::ST_IF:
           cout << "If";
           break;
@@ -109,6 +113,11 @@ int main(int argc, char *argv[])
     } else {
       cerr << "failed to open file: " << argv[1] << endl;
     }
+  } else {
+#if YYDEBUG != 0
+    extern int yydebug;
+    yydebug = 1;
+#endif
   }
 
   yyparse();

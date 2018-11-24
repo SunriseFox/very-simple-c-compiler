@@ -65,13 +65,14 @@
 %left LAND LOR
 %right MULAS DIVAS MODAS ADDAS SUBAS BANDAS BXORAS BORAS ASSIGN
 %nonassoc IFX
+%right UMINUS UADD
 
 // ---
 
 %type <node> node
 %type <node> declaration id_list id_pair
 %type <node> expression assignment logical comparative additive multiplicative bitshift bitbinary postfix cast
-%type <node> if_condition if_else_condition for_statement while_statement do_while_statement
+%type <node> if_condition if_else_condition for_statement while_statement do_while_statement  function_declaration_statement
 %type <node> statement program
 %type <symbol> id_prefix
 
@@ -128,7 +129,20 @@ statement : expression SEMICOLON {
           | do_while_statement {
             $$ = $1;
           }
+          | function_declaration_statement {
+            $$ = $1;
+          }
           ;
+
+function_declaration_statement  : type IDENTIFIER LP RP LB program RB {
+                                  Callable* symbol = new Callable(currentType, *$2);
+                                  $$ = new FuncStatementNode(lineno, symbol, {$6});
+                                }
+                                | type IDENTIFIER LP RP LB RB {
+                                  Callable* symbol = new Callable(currentType, *$2);
+                                  $$ = new FuncStatementNode(lineno, symbol);
+                                }
+                                ;
 
 if_condition  : K_IF LP expression RP statement %prec IFX {
                 $$ = new StatementNode(lineno, StatementNode::ST_IF, {$3, $5});
@@ -289,6 +303,12 @@ additive  : multiplicative {
           | additive BOR multiplicative {
             $$ = new OperatorNode(lineno, OperatorNode::OP_BOR, {$1, $3});
           }
+          | ADD multiplicative %prec UADD {
+            $$ = new OperatorNode(lineno, OperatorNode::OP_ADD, {$2});
+          }
+          | SUB multiplicative %prec UMINUS {
+            $$ = new OperatorNode(lineno, OperatorNode::OP_SUB, {$2});
+          }
           ;
 
 multiplicative  : bitshift  {
@@ -363,6 +383,6 @@ node  : IDENTIFIER  {
 
 int yyerror(char const* message)
 {
-  cout << message << endl;
+  cout << message << " at line " << lineno << endl;
   return -1;
 }

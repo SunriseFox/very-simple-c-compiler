@@ -4,6 +4,8 @@
 #include "pch.h"
 #include "symbol.h"
 
+#include <typeinfo>
+
 using namespace std;
 
 class TreeNode {
@@ -32,6 +34,8 @@ public:
     void addChild(TreeNode* node);
     void addSibling(TreeNode* node);
 
+    virtual ~TreeNode() {}
+
 protected:
     TreeNode(int lineno, NodeType type);
 
@@ -52,12 +56,22 @@ public /* types */:
         ST_IF_ELSE,
         ST_BREAK,
         ST_CONTINUE,
-        ST_GOTO
+        ST_GOTO,
+        ST_FUNCTION
     };
 
 public:
+
     StatementType type;
     StatementNode (int lineno, StatementType type, std::initializer_list<TreeNode*> children = std::initializer_list<TreeNode*>());
+    ~StatementNode() {}
+};
+
+class FuncStatementNode : public StatementNode {
+
+public:
+
+    FuncStatementNode(int lineno, Callable* symbol, std::initializer_list<TreeNode*> children = std::initializer_list<TreeNode*>());
 };
 
 class DeclarationNode : public TreeNode {
@@ -65,7 +79,7 @@ class DeclarationNode : public TreeNode {
 public:
 
     DeclarationNode (int lineno, Symbol *symbol);
-
+    ~DeclarationNode() {}
 };
 
 class ExprNode : public TreeNode {
@@ -74,7 +88,7 @@ public:
 
     ExprNode (int lineno, Symbol* symbol);
     ExprNode (int lineno, Symbol::ValueType type, string value, bool isConstant = false);
-
+    ~ExprNode() {}
 };
 
 class OperatorNode: public TreeNode {
@@ -98,6 +112,8 @@ public /* types */:
 
         OP_ADD,
         OP_SUB,
+        OP_UADD,
+        OP_USUB,
 
         OP_BAND,
         OP_BXOR,
@@ -131,6 +147,7 @@ public /* statics */:
 public:
 
     OperatorNode(int lineno, OperatorType type, std::initializer_list<TreeNode*> children);
+    ~OperatorNode() {}
 
     OperatorType type;
 
