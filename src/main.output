@@ -1,0 +1,2502 @@
+Terminals unused in grammar
+
+   K_BREAK
+   K_CASE
+   K_CONTINUE
+   K_DEFAULT
+   K_GOTO
+   K_RET
+   K_SWITCH
+   SIZEOF
+   QM
+   COLON
+   LABEL
+
+
+Grammar
+
+    0 $accept: start $end
+
+    1 start: program
+
+    2 program: program statement
+    3        | statement
+    4        | LB RB
+
+    5 lb_scope: LB
+
+    6 statement: expression SEMICOLON
+    7          | declaration SEMICOLON
+    8          | SEMICOLON
+    9          | lb_scope program RB
+   10          | if_else_condition
+   11          | if_condition
+   12          | for_statement
+   13          | while_statement
+   14          | do_while_statement
+
+   15 if_condition: K_IF LP expression RP statement
+
+   16 if_else_condition: K_IF LP expression RP statement K_ELSE statement
+
+   17 for_statement: K_FOR LP expression SEMICOLON expression SEMICOLON expression RP statement
+
+   18 while_statement: K_WHILE LP expression RP statement
+
+   19 do_while_statement: K_DO lb_scope statement RB K_WHILE LP expression RP SEMICOLON
+
+   20 declaration: type id_list
+
+   21 type: T_INT
+   22     | T_CHAR
+   23     | T_STRING
+   24     | T_DOUBLE
+   25     | T_VOID
+   26     | T_AUTO
+
+   27 id_list: id_pair
+   28        | id_list COMMA id_pair
+
+   29 id_pair: id_prefix ASSIGN expression
+   30        | id_prefix
+
+   31 id_prefix: IDENTIFIER
+
+   32 expression: assignment
+   33           | expression COMMA assignment
+
+   34 assignment: logical
+   35           | node MULAS logical
+   36           | node DIVAS logical
+   37           | node MODAS logical
+   38           | node ADDAS logical
+   39           | node SUBAS logical
+   40           | node BANDAS logical
+   41           | node BXORAS logical
+   42           | node BORAS logical
+   43           | node ASSIGN logical
+
+   44 logical: comparative
+   45        | logical LAND comparative
+   46        | logical LOR comparative
+
+   47 comparative: additive
+   48            | comparative LESS additive
+   49            | comparative LESSEQ additive
+   50            | comparative MORE additive
+   51            | comparative MOREEQ additive
+   52            | comparative EQ additive
+   53            | comparative NE additive
+
+   54 additive: multiplicative
+   55         | additive ADD multiplicative
+   56         | additive SUB multiplicative
+   57         | additive BAND multiplicative
+   58         | additive BXOR multiplicative
+   59         | additive BOR multiplicative
+
+   60 multiplicative: bitshift
+   61               | multiplicative MUL bitshift
+   62               | multiplicative DIV bitshift
+   63               | multiplicative MOD bitshift
+
+   64 bitshift: bitbinary
+   65         | bitshift LMOVE bitbinary
+   66         | bitshift RMOVE bitbinary
+
+   67 bitbinary: postfix
+   68          | NOT bitbinary
+   69          | BREV bitbinary
+
+   70 postfix: cast
+   71        | INC postfix
+   72        | DEC postfix
+
+   73 cast: LP expression RP
+   74     | node
+
+   75 node: IDENTIFIER
+   76     | SYMBOL
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+T_AUTO (258) 26
+T_CHAR (259) 22
+T_INT (260) 21
+T_DOUBLE (261) 24
+T_VOID (262) 25
+T_STRING (263) 23
+K_BREAK (264)
+K_CASE (265)
+K_CONTINUE (266)
+K_DEFAULT (267)
+K_DO (268) 19
+K_ELSE (269) 16
+K_FOR (270) 17
+K_GOTO (271)
+K_IF (272) 15 16
+K_RET (273)
+K_SWITCH (274)
+K_WHILE (275) 18 19
+LP (276) 15 16 17 18 19 73
+RP (277) 15 16 17 18 19 73
+INC (278) 71
+DEC (279) 72
+SIZEOF (280)
+NOT (281) 68
+BREV (282) 69
+LMOVE (283) 65
+RMOVE (284) 66
+MUL (285) 61
+DIV (286) 62
+MOD (287) 63
+ADD (288) 55
+SUB (289) 56
+BAND (290) 57
+BXOR (291) 58
+BOR (292) 59
+LESS (293) 48
+LESSEQ (294) 49
+MORE (295) 50
+MOREEQ (296) 51
+EQ (297) 52
+NE (298) 53
+LAND (299) 45
+LOR (300) 46
+QM (301)
+COLON (302)
+MULAS (303) 35
+DIVAS (304) 36
+MODAS (305) 37
+ADDAS (306) 38
+SUBAS (307) 39
+BANDAS (308) 40
+BXORAS (309) 41
+BORAS (310) 42
+ASSIGN (311) 29 43
+COMMA (312) 28 33
+SEMICOLON (313) 6 7 8 17 19
+LABEL (314)
+SYMBOL (315) 76
+IDENTIFIER (316) 31 75
+LB (317) 4 5
+RB (318) 4 9 19
+IFX (319)
+
+
+Nonterminals, with rules where they appear
+
+$accept (65)
+    on left: 0
+start (66)
+    on left: 1, on right: 0
+program (67)
+    on left: 2 3 4, on right: 1 2 9
+lb_scope (68)
+    on left: 5, on right: 9 19
+statement (69)
+    on left: 6 7 8 9 10 11 12 13 14, on right: 2 3 15 16 17 18 19
+if_condition (70)
+    on left: 15, on right: 11
+if_else_condition (71)
+    on left: 16, on right: 10
+for_statement (72)
+    on left: 17, on right: 12
+while_statement (73)
+    on left: 18, on right: 13
+do_while_statement (74)
+    on left: 19, on right: 14
+declaration (75)
+    on left: 20, on right: 7
+type (76)
+    on left: 21 22 23 24 25 26, on right: 20
+id_list (77)
+    on left: 27 28, on right: 20 28
+id_pair (78)
+    on left: 29 30, on right: 27 28
+id_prefix (79)
+    on left: 31, on right: 29 30
+expression (80)
+    on left: 32 33, on right: 6 15 16 17 18 19 29 33 73
+assignment (81)
+    on left: 34 35 36 37 38 39 40 41 42 43, on right: 32 33
+logical (82)
+    on left: 44 45 46, on right: 34 35 36 37 38 39 40 41 42 43 45 46
+comparative (83)
+    on left: 47 48 49 50 51 52 53, on right: 44 45 46 48 49 50 51 52
+    53
+additive (84)
+    on left: 54 55 56 57 58 59, on right: 47 48 49 50 51 52 53 55 56
+    57 58 59
+multiplicative (85)
+    on left: 60 61 62 63, on right: 54 55 56 57 58 59 61 62 63
+bitshift (86)
+    on left: 64 65 66, on right: 60 61 62 63 65 66
+bitbinary (87)
+    on left: 67 68 69, on right: 64 65 66 68 69
+postfix (88)
+    on left: 70 71 72, on right: 67 71 72
+cast (89)
+    on left: 73 74, on right: 70
+node (90)
+    on left: 75 76, on right: 35 36 37 38 39 40 41 42 43 74
+
+
+State 0
+
+    0 $accept: . start $end
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 19
+
+    start               go to state 20
+    program             go to state 21
+    lb_scope            go to state 22
+    statement           go to state 23
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 1
+
+   26 type: T_AUTO .
+
+    $default  reduce using rule 26 (type)
+
+
+State 2
+
+   22 type: T_CHAR .
+
+    $default  reduce using rule 22 (type)
+
+
+State 3
+
+   21 type: T_INT .
+
+    $default  reduce using rule 21 (type)
+
+
+State 4
+
+   24 type: T_DOUBLE .
+
+    $default  reduce using rule 24 (type)
+
+
+State 5
+
+   25 type: T_VOID .
+
+    $default  reduce using rule 25 (type)
+
+
+State 6
+
+   23 type: T_STRING .
+
+    $default  reduce using rule 23 (type)
+
+
+State 7
+
+   19 do_while_statement: K_DO . lb_scope statement RB K_WHILE LP expression RP SEMICOLON
+
+    LB  shift, and go to state 42
+
+    lb_scope  go to state 43
+
+
+State 8
+
+   17 for_statement: K_FOR . LP expression SEMICOLON expression SEMICOLON expression RP statement
+
+    LP  shift, and go to state 44
+
+
+State 9
+
+   15 if_condition: K_IF . LP expression RP statement
+   16 if_else_condition: K_IF . LP expression RP statement K_ELSE statement
+
+    LP  shift, and go to state 45
+
+
+State 10
+
+   18 while_statement: K_WHILE . LP expression RP statement
+
+    LP  shift, and go to state 46
+
+
+State 11
+
+   73 cast: LP . expression RP
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 47
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 12
+
+   71 postfix: INC . postfix
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    postfix  go to state 48
+    cast     go to state 40
+    node     go to state 49
+
+
+State 13
+
+   72 postfix: DEC . postfix
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    postfix  go to state 50
+    cast     go to state 40
+    node     go to state 49
+
+
+State 14
+
+   68 bitbinary: NOT . bitbinary
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitbinary  go to state 51
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 15
+
+   69 bitbinary: BREV . bitbinary
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitbinary  go to state 52
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 16
+
+    8 statement: SEMICOLON .
+
+    $default  reduce using rule 8 (statement)
+
+
+State 17
+
+   76 node: SYMBOL .
+
+    $default  reduce using rule 76 (node)
+
+
+State 18
+
+   75 node: IDENTIFIER .
+
+    $default  reduce using rule 75 (node)
+
+
+State 19
+
+    4 program: LB . RB
+    5 lb_scope: LB .
+
+    RB  shift, and go to state 53
+
+    $default  reduce using rule 5 (lb_scope)
+
+
+State 20
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 54
+
+
+State 21
+
+    1 start: program .
+    2 program: program . statement
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+
+    $default  reduce using rule 1 (start)
+
+    lb_scope            go to state 22
+    statement           go to state 55
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 22
+
+    9 statement: lb_scope . program RB
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 19
+
+    program             go to state 56
+    lb_scope            go to state 22
+    statement           go to state 23
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 23
+
+    3 program: statement .
+
+    $default  reduce using rule 3 (program)
+
+
+State 24
+
+   11 statement: if_condition .
+
+    $default  reduce using rule 11 (statement)
+
+
+State 25
+
+   10 statement: if_else_condition .
+
+    $default  reduce using rule 10 (statement)
+
+
+State 26
+
+   12 statement: for_statement .
+
+    $default  reduce using rule 12 (statement)
+
+
+State 27
+
+   13 statement: while_statement .
+
+    $default  reduce using rule 13 (statement)
+
+
+State 28
+
+   14 statement: do_while_statement .
+
+    $default  reduce using rule 14 (statement)
+
+
+State 29
+
+    7 statement: declaration . SEMICOLON
+
+    SEMICOLON  shift, and go to state 57
+
+
+State 30
+
+   20 declaration: type . id_list
+
+    IDENTIFIER  shift, and go to state 58
+
+    id_list    go to state 59
+    id_pair    go to state 60
+    id_prefix  go to state 61
+
+
+State 31
+
+    6 statement: expression . SEMICOLON
+   33 expression: expression . COMMA assignment
+
+    COMMA      shift, and go to state 62
+    SEMICOLON  shift, and go to state 63
+
+
+State 32
+
+   32 expression: assignment .
+
+    $default  reduce using rule 32 (expression)
+
+
+State 33
+
+   34 assignment: logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 34 (assignment)
+
+
+State 34
+
+   44 logical: comparative .
+   48 comparative: comparative . LESS additive
+   49            | comparative . LESSEQ additive
+   50            | comparative . MORE additive
+   51            | comparative . MOREEQ additive
+   52            | comparative . EQ additive
+   53            | comparative . NE additive
+
+    LESS    shift, and go to state 66
+    LESSEQ  shift, and go to state 67
+    MORE    shift, and go to state 68
+    MOREEQ  shift, and go to state 69
+    EQ      shift, and go to state 70
+    NE      shift, and go to state 71
+
+    $default  reduce using rule 44 (logical)
+
+
+State 35
+
+   47 comparative: additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 47 (comparative)
+
+
+State 36
+
+   54 additive: multiplicative .
+   61 multiplicative: multiplicative . MUL bitshift
+   62               | multiplicative . DIV bitshift
+   63               | multiplicative . MOD bitshift
+
+    MUL  shift, and go to state 77
+    DIV  shift, and go to state 78
+    MOD  shift, and go to state 79
+
+    $default  reduce using rule 54 (additive)
+
+
+State 37
+
+   60 multiplicative: bitshift .
+   65 bitshift: bitshift . LMOVE bitbinary
+   66         | bitshift . RMOVE bitbinary
+
+    LMOVE  shift, and go to state 80
+    RMOVE  shift, and go to state 81
+
+    $default  reduce using rule 60 (multiplicative)
+
+
+State 38
+
+   64 bitshift: bitbinary .
+
+    $default  reduce using rule 64 (bitshift)
+
+
+State 39
+
+   67 bitbinary: postfix .
+
+    $default  reduce using rule 67 (bitbinary)
+
+
+State 40
+
+   70 postfix: cast .
+
+    $default  reduce using rule 70 (postfix)
+
+
+State 41
+
+   35 assignment: node . MULAS logical
+   36           | node . DIVAS logical
+   37           | node . MODAS logical
+   38           | node . ADDAS logical
+   39           | node . SUBAS logical
+   40           | node . BANDAS logical
+   41           | node . BXORAS logical
+   42           | node . BORAS logical
+   43           | node . ASSIGN logical
+   74 cast: node .
+
+    MULAS   shift, and go to state 82
+    DIVAS   shift, and go to state 83
+    MODAS   shift, and go to state 84
+    ADDAS   shift, and go to state 85
+    SUBAS   shift, and go to state 86
+    BANDAS  shift, and go to state 87
+    BXORAS  shift, and go to state 88
+    BORAS   shift, and go to state 89
+    ASSIGN  shift, and go to state 90
+
+    $default  reduce using rule 74 (cast)
+
+
+State 42
+
+    5 lb_scope: LB .
+
+    $default  reduce using rule 5 (lb_scope)
+
+
+State 43
+
+   19 do_while_statement: K_DO lb_scope . statement RB K_WHILE LP expression RP SEMICOLON
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+
+    lb_scope            go to state 22
+    statement           go to state 91
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 44
+
+   17 for_statement: K_FOR LP . expression SEMICOLON expression SEMICOLON expression RP statement
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 92
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 45
+
+   15 if_condition: K_IF LP . expression RP statement
+   16 if_else_condition: K_IF LP . expression RP statement K_ELSE statement
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 93
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 46
+
+   18 while_statement: K_WHILE LP . expression RP statement
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 94
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 47
+
+   33 expression: expression . COMMA assignment
+   73 cast: LP expression . RP
+
+    RP     shift, and go to state 95
+    COMMA  shift, and go to state 62
+
+
+State 48
+
+   71 postfix: INC postfix .
+
+    $default  reduce using rule 71 (postfix)
+
+
+State 49
+
+   74 cast: node .
+
+    $default  reduce using rule 74 (cast)
+
+
+State 50
+
+   72 postfix: DEC postfix .
+
+    $default  reduce using rule 72 (postfix)
+
+
+State 51
+
+   68 bitbinary: NOT bitbinary .
+
+    $default  reduce using rule 68 (bitbinary)
+
+
+State 52
+
+   69 bitbinary: BREV bitbinary .
+
+    $default  reduce using rule 69 (bitbinary)
+
+
+State 53
+
+    4 program: LB RB .
+
+    $default  reduce using rule 4 (program)
+
+
+State 54
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+State 55
+
+    2 program: program statement .
+
+    $default  reduce using rule 2 (program)
+
+
+State 56
+
+    2 program: program . statement
+    9 statement: lb_scope program . RB
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+    RB          shift, and go to state 96
+
+    lb_scope            go to state 22
+    statement           go to state 55
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 57
+
+    7 statement: declaration SEMICOLON .
+
+    $default  reduce using rule 7 (statement)
+
+
+State 58
+
+   31 id_prefix: IDENTIFIER .
+
+    $default  reduce using rule 31 (id_prefix)
+
+
+State 59
+
+   20 declaration: type id_list .
+   28 id_list: id_list . COMMA id_pair
+
+    COMMA  shift, and go to state 97
+
+    $default  reduce using rule 20 (declaration)
+
+
+State 60
+
+   27 id_list: id_pair .
+
+    $default  reduce using rule 27 (id_list)
+
+
+State 61
+
+   29 id_pair: id_prefix . ASSIGN expression
+   30        | id_prefix .
+
+    ASSIGN  shift, and go to state 98
+
+    $default  reduce using rule 30 (id_pair)
+
+
+State 62
+
+   33 expression: expression COMMA . assignment
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    assignment      go to state 99
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 63
+
+    6 statement: expression SEMICOLON .
+
+    $default  reduce using rule 6 (statement)
+
+
+State 64
+
+   45 logical: logical LAND . comparative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    comparative     go to state 100
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 65
+
+   46 logical: logical LOR . comparative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    comparative     go to state 101
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 66
+
+   48 comparative: comparative LESS . additive
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    additive        go to state 102
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 67
+
+   49 comparative: comparative LESSEQ . additive
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    additive        go to state 103
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 68
+
+   50 comparative: comparative MORE . additive
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    additive        go to state 104
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 69
+
+   51 comparative: comparative MOREEQ . additive
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    additive        go to state 105
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 70
+
+   52 comparative: comparative EQ . additive
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    additive        go to state 106
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 71
+
+   53 comparative: comparative NE . additive
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    additive        go to state 107
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 72
+
+   55 additive: additive ADD . multiplicative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    multiplicative  go to state 108
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 73
+
+   56 additive: additive SUB . multiplicative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    multiplicative  go to state 109
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 74
+
+   57 additive: additive BAND . multiplicative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    multiplicative  go to state 110
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 75
+
+   58 additive: additive BXOR . multiplicative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    multiplicative  go to state 111
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 76
+
+   59 additive: additive BOR . multiplicative
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    multiplicative  go to state 112
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 77
+
+   61 multiplicative: multiplicative MUL . bitshift
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitshift   go to state 113
+    bitbinary  go to state 38
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 78
+
+   62 multiplicative: multiplicative DIV . bitshift
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitshift   go to state 114
+    bitbinary  go to state 38
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 79
+
+   63 multiplicative: multiplicative MOD . bitshift
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitshift   go to state 115
+    bitbinary  go to state 38
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 80
+
+   65 bitshift: bitshift LMOVE . bitbinary
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitbinary  go to state 116
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 81
+
+   66 bitshift: bitshift RMOVE . bitbinary
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    bitbinary  go to state 117
+    postfix    go to state 39
+    cast       go to state 40
+    node       go to state 49
+
+
+State 82
+
+   35 assignment: node MULAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 118
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 83
+
+   36 assignment: node DIVAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 119
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 84
+
+   37 assignment: node MODAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 120
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 85
+
+   38 assignment: node ADDAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 121
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 86
+
+   39 assignment: node SUBAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 122
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 87
+
+   40 assignment: node BANDAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 123
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 88
+
+   41 assignment: node BXORAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 124
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 89
+
+   42 assignment: node BORAS . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 125
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 90
+
+   43 assignment: node ASSIGN . logical
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    logical         go to state 126
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 49
+
+
+State 91
+
+   19 do_while_statement: K_DO lb_scope statement . RB K_WHILE LP expression RP SEMICOLON
+
+    RB  shift, and go to state 127
+
+
+State 92
+
+   17 for_statement: K_FOR LP expression . SEMICOLON expression SEMICOLON expression RP statement
+   33 expression: expression . COMMA assignment
+
+    COMMA      shift, and go to state 62
+    SEMICOLON  shift, and go to state 128
+
+
+State 93
+
+   15 if_condition: K_IF LP expression . RP statement
+   16 if_else_condition: K_IF LP expression . RP statement K_ELSE statement
+   33 expression: expression . COMMA assignment
+
+    RP     shift, and go to state 129
+    COMMA  shift, and go to state 62
+
+
+State 94
+
+   18 while_statement: K_WHILE LP expression . RP statement
+   33 expression: expression . COMMA assignment
+
+    RP     shift, and go to state 130
+    COMMA  shift, and go to state 62
+
+
+State 95
+
+   73 cast: LP expression RP .
+
+    $default  reduce using rule 73 (cast)
+
+
+State 96
+
+    9 statement: lb_scope program RB .
+
+    $default  reduce using rule 9 (statement)
+
+
+State 97
+
+   28 id_list: id_list COMMA . id_pair
+
+    IDENTIFIER  shift, and go to state 58
+
+    id_pair    go to state 131
+    id_prefix  go to state 61
+
+
+State 98
+
+   29 id_pair: id_prefix ASSIGN . expression
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 132
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 99
+
+   33 expression: expression COMMA assignment .
+
+    $default  reduce using rule 33 (expression)
+
+
+State 100
+
+   45 logical: logical LAND comparative .
+   48 comparative: comparative . LESS additive
+   49            | comparative . LESSEQ additive
+   50            | comparative . MORE additive
+   51            | comparative . MOREEQ additive
+   52            | comparative . EQ additive
+   53            | comparative . NE additive
+
+    LESS    shift, and go to state 66
+    LESSEQ  shift, and go to state 67
+    MORE    shift, and go to state 68
+    MOREEQ  shift, and go to state 69
+    EQ      shift, and go to state 70
+    NE      shift, and go to state 71
+
+    $default  reduce using rule 45 (logical)
+
+
+State 101
+
+   46 logical: logical LOR comparative .
+   48 comparative: comparative . LESS additive
+   49            | comparative . LESSEQ additive
+   50            | comparative . MORE additive
+   51            | comparative . MOREEQ additive
+   52            | comparative . EQ additive
+   53            | comparative . NE additive
+
+    LESS    shift, and go to state 66
+    LESSEQ  shift, and go to state 67
+    MORE    shift, and go to state 68
+    MOREEQ  shift, and go to state 69
+    EQ      shift, and go to state 70
+    NE      shift, and go to state 71
+
+    $default  reduce using rule 46 (logical)
+
+
+State 102
+
+   48 comparative: comparative LESS additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 48 (comparative)
+
+
+State 103
+
+   49 comparative: comparative LESSEQ additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 49 (comparative)
+
+
+State 104
+
+   50 comparative: comparative MORE additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 50 (comparative)
+
+
+State 105
+
+   51 comparative: comparative MOREEQ additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 51 (comparative)
+
+
+State 106
+
+   52 comparative: comparative EQ additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 52 (comparative)
+
+
+State 107
+
+   53 comparative: comparative NE additive .
+   55 additive: additive . ADD multiplicative
+   56         | additive . SUB multiplicative
+   57         | additive . BAND multiplicative
+   58         | additive . BXOR multiplicative
+   59         | additive . BOR multiplicative
+
+    ADD   shift, and go to state 72
+    SUB   shift, and go to state 73
+    BAND  shift, and go to state 74
+    BXOR  shift, and go to state 75
+    BOR   shift, and go to state 76
+
+    $default  reduce using rule 53 (comparative)
+
+
+State 108
+
+   55 additive: additive ADD multiplicative .
+   61 multiplicative: multiplicative . MUL bitshift
+   62               | multiplicative . DIV bitshift
+   63               | multiplicative . MOD bitshift
+
+    MUL  shift, and go to state 77
+    DIV  shift, and go to state 78
+    MOD  shift, and go to state 79
+
+    $default  reduce using rule 55 (additive)
+
+
+State 109
+
+   56 additive: additive SUB multiplicative .
+   61 multiplicative: multiplicative . MUL bitshift
+   62               | multiplicative . DIV bitshift
+   63               | multiplicative . MOD bitshift
+
+    MUL  shift, and go to state 77
+    DIV  shift, and go to state 78
+    MOD  shift, and go to state 79
+
+    $default  reduce using rule 56 (additive)
+
+
+State 110
+
+   57 additive: additive BAND multiplicative .
+   61 multiplicative: multiplicative . MUL bitshift
+   62               | multiplicative . DIV bitshift
+   63               | multiplicative . MOD bitshift
+
+    MUL  shift, and go to state 77
+    DIV  shift, and go to state 78
+    MOD  shift, and go to state 79
+
+    $default  reduce using rule 57 (additive)
+
+
+State 111
+
+   58 additive: additive BXOR multiplicative .
+   61 multiplicative: multiplicative . MUL bitshift
+   62               | multiplicative . DIV bitshift
+   63               | multiplicative . MOD bitshift
+
+    MUL  shift, and go to state 77
+    DIV  shift, and go to state 78
+    MOD  shift, and go to state 79
+
+    $default  reduce using rule 58 (additive)
+
+
+State 112
+
+   59 additive: additive BOR multiplicative .
+   61 multiplicative: multiplicative . MUL bitshift
+   62               | multiplicative . DIV bitshift
+   63               | multiplicative . MOD bitshift
+
+    MUL  shift, and go to state 77
+    DIV  shift, and go to state 78
+    MOD  shift, and go to state 79
+
+    $default  reduce using rule 59 (additive)
+
+
+State 113
+
+   61 multiplicative: multiplicative MUL bitshift .
+   65 bitshift: bitshift . LMOVE bitbinary
+   66         | bitshift . RMOVE bitbinary
+
+    LMOVE  shift, and go to state 80
+    RMOVE  shift, and go to state 81
+
+    $default  reduce using rule 61 (multiplicative)
+
+
+State 114
+
+   62 multiplicative: multiplicative DIV bitshift .
+   65 bitshift: bitshift . LMOVE bitbinary
+   66         | bitshift . RMOVE bitbinary
+
+    LMOVE  shift, and go to state 80
+    RMOVE  shift, and go to state 81
+
+    $default  reduce using rule 62 (multiplicative)
+
+
+State 115
+
+   63 multiplicative: multiplicative MOD bitshift .
+   65 bitshift: bitshift . LMOVE bitbinary
+   66         | bitshift . RMOVE bitbinary
+
+    LMOVE  shift, and go to state 80
+    RMOVE  shift, and go to state 81
+
+    $default  reduce using rule 63 (multiplicative)
+
+
+State 116
+
+   65 bitshift: bitshift LMOVE bitbinary .
+
+    $default  reduce using rule 65 (bitshift)
+
+
+State 117
+
+   66 bitshift: bitshift RMOVE bitbinary .
+
+    $default  reduce using rule 66 (bitshift)
+
+
+State 118
+
+   35 assignment: node MULAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 35 (assignment)
+
+
+State 119
+
+   36 assignment: node DIVAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 36 (assignment)
+
+
+State 120
+
+   37 assignment: node MODAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 37 (assignment)
+
+
+State 121
+
+   38 assignment: node ADDAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 38 (assignment)
+
+
+State 122
+
+   39 assignment: node SUBAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 39 (assignment)
+
+
+State 123
+
+   40 assignment: node BANDAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 40 (assignment)
+
+
+State 124
+
+   41 assignment: node BXORAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 41 (assignment)
+
+
+State 125
+
+   42 assignment: node BORAS logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 42 (assignment)
+
+
+State 126
+
+   43 assignment: node ASSIGN logical .
+   45 logical: logical . LAND comparative
+   46        | logical . LOR comparative
+
+    LAND  shift, and go to state 64
+    LOR   shift, and go to state 65
+
+    $default  reduce using rule 43 (assignment)
+
+
+State 127
+
+   19 do_while_statement: K_DO lb_scope statement RB . K_WHILE LP expression RP SEMICOLON
+
+    K_WHILE  shift, and go to state 133
+
+
+State 128
+
+   17 for_statement: K_FOR LP expression SEMICOLON . expression SEMICOLON expression RP statement
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 134
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 129
+
+   15 if_condition: K_IF LP expression RP . statement
+   16 if_else_condition: K_IF LP expression RP . statement K_ELSE statement
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+
+    lb_scope            go to state 22
+    statement           go to state 135
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 130
+
+   18 while_statement: K_WHILE LP expression RP . statement
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+
+    lb_scope            go to state 22
+    statement           go to state 136
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 131
+
+   28 id_list: id_list COMMA id_pair .
+
+    $default  reduce using rule 28 (id_list)
+
+
+State 132
+
+   29 id_pair: id_prefix ASSIGN expression .
+   33 expression: expression . COMMA assignment
+
+    $default  reduce using rule 29 (id_pair)
+
+
+State 133
+
+   19 do_while_statement: K_DO lb_scope statement RB K_WHILE . LP expression RP SEMICOLON
+
+    LP  shift, and go to state 137
+
+
+State 134
+
+   17 for_statement: K_FOR LP expression SEMICOLON expression . SEMICOLON expression RP statement
+   33 expression: expression . COMMA assignment
+
+    COMMA      shift, and go to state 62
+    SEMICOLON  shift, and go to state 138
+
+
+State 135
+
+   15 if_condition: K_IF LP expression RP statement .
+   16 if_else_condition: K_IF LP expression RP statement . K_ELSE statement
+
+    K_ELSE  shift, and go to state 139
+
+    $default  reduce using rule 15 (if_condition)
+
+
+State 136
+
+   18 while_statement: K_WHILE LP expression RP statement .
+
+    $default  reduce using rule 18 (while_statement)
+
+
+State 137
+
+   19 do_while_statement: K_DO lb_scope statement RB K_WHILE LP . expression RP SEMICOLON
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 140
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 138
+
+   17 for_statement: K_FOR LP expression SEMICOLON expression SEMICOLON . expression RP statement
+
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+
+    expression      go to state 141
+    assignment      go to state 32
+    logical         go to state 33
+    comparative     go to state 34
+    additive        go to state 35
+    multiplicative  go to state 36
+    bitshift        go to state 37
+    bitbinary       go to state 38
+    postfix         go to state 39
+    cast            go to state 40
+    node            go to state 41
+
+
+State 139
+
+   16 if_else_condition: K_IF LP expression RP statement K_ELSE . statement
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+
+    lb_scope            go to state 22
+    statement           go to state 142
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 140
+
+   19 do_while_statement: K_DO lb_scope statement RB K_WHILE LP expression . RP SEMICOLON
+   33 expression: expression . COMMA assignment
+
+    RP     shift, and go to state 143
+    COMMA  shift, and go to state 62
+
+
+State 141
+
+   17 for_statement: K_FOR LP expression SEMICOLON expression SEMICOLON expression . RP statement
+   33 expression: expression . COMMA assignment
+
+    RP     shift, and go to state 144
+    COMMA  shift, and go to state 62
+
+
+State 142
+
+   16 if_else_condition: K_IF LP expression RP statement K_ELSE statement .
+
+    $default  reduce using rule 16 (if_else_condition)
+
+
+State 143
+
+   19 do_while_statement: K_DO lb_scope statement RB K_WHILE LP expression RP . SEMICOLON
+
+    SEMICOLON  shift, and go to state 145
+
+
+State 144
+
+   17 for_statement: K_FOR LP expression SEMICOLON expression SEMICOLON expression RP . statement
+
+    T_AUTO      shift, and go to state 1
+    T_CHAR      shift, and go to state 2
+    T_INT       shift, and go to state 3
+    T_DOUBLE    shift, and go to state 4
+    T_VOID      shift, and go to state 5
+    T_STRING    shift, and go to state 6
+    K_DO        shift, and go to state 7
+    K_FOR       shift, and go to state 8
+    K_IF        shift, and go to state 9
+    K_WHILE     shift, and go to state 10
+    LP          shift, and go to state 11
+    INC         shift, and go to state 12
+    DEC         shift, and go to state 13
+    NOT         shift, and go to state 14
+    BREV        shift, and go to state 15
+    SEMICOLON   shift, and go to state 16
+    SYMBOL      shift, and go to state 17
+    IDENTIFIER  shift, and go to state 18
+    LB          shift, and go to state 42
+
+    lb_scope            go to state 22
+    statement           go to state 146
+    if_condition        go to state 24
+    if_else_condition   go to state 25
+    for_statement       go to state 26
+    while_statement     go to state 27
+    do_while_statement  go to state 28
+    declaration         go to state 29
+    type                go to state 30
+    expression          go to state 31
+    assignment          go to state 32
+    logical             go to state 33
+    comparative         go to state 34
+    additive            go to state 35
+    multiplicative      go to state 36
+    bitshift            go to state 37
+    bitbinary           go to state 38
+    postfix             go to state 39
+    cast                go to state 40
+    node                go to state 41
+
+
+State 145
+
+   19 do_while_statement: K_DO lb_scope statement RB K_WHILE LP expression RP SEMICOLON .
+
+    $default  reduce using rule 19 (do_while_statement)
+
+
+State 146
+
+   17 for_statement: K_FOR LP expression SEMICOLON expression SEMICOLON expression RP statement .
+
+    $default  reduce using rule 17 (for_statement)
