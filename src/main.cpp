@@ -1,6 +1,6 @@
 #include "common.h"
 
-TreeNode * root;
+extern TreeNode * root;
 extern FILE* yyin;
 
 void showTree(TreeNode* root) {

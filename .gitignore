@@ -1,3 +1,8 @@
 src/src.pro.user
+src/main.output
+src/main.lex.yy.cpp
+src/main.tab.cpp
+src/main.tab.h
+src/pch.h.gch
 main
 a.out

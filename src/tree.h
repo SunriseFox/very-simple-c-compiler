@@ -153,4 +153,11 @@ public:
 
 };
 
+class EmptyNode : public TreeNode {
+
+public:
+    EmptyNode(int lineno);
+
+};
+
 #endif // TREE_H

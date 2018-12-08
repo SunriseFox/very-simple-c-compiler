@@ -10,8 +10,8 @@
     return len > 0 ? str.substr(0, len) : string();
   }
 
-EOL	[\r\n|\r|\n]
-WHILTESPACE [\s\t ]
+EOL	(\r\n|\r|\n)
+WHILTESPACE [[:blank:]]
 
 CHAR \'.+\'
 STRING \".+\"

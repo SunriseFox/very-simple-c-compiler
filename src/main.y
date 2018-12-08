@@ -2,7 +2,7 @@
 %{
   #include "common.h"
   extern int lineno;
-  extern TreeNode * root;
+  TreeNode * root;
   Symbol::ValueType currentType = Symbol::VALUE_NONE;
 
   int yylex();
@@ -216,6 +216,9 @@ expression  : assignment {
             | expression COMMA assignment {
               $1 -> addSibling($3);
               $$ = $3;
+            }
+            | %empty {
+              $$ = new EmptyNode(lineno);
             }
             ;
 

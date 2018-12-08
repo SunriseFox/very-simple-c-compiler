@@ -130,3 +130,8 @@ OperatorNode::OperatorNode(int lineno, OperatorNode::OperatorType type, std::ini
     for( auto elem : children )
         this->addChild(elem);
 }
+
+EmptyNode::EmptyNode(int lineno) : TreeNode (lineno, NODE_NONE)
+{
+
+}
