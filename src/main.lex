@@ -58,8 +58,8 @@ RESERVED "enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"unsigned"
 "!" return NOT;
 "~" return BREV;
 
-"<<" return LMOVE;
-">>" return RMOVE;
+"<<" return LSHFT;
+">>" return RSHFT;
 
 "*" return MUL;
 "/" return DIV;
@@ -84,6 +84,9 @@ RESERVED "enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"unsigned"
 
 "?" return QM;
 ":" return COLON;
+
+"<<=" return LSHFTAS;
+">>=" return RSHFTAS;
 
 "*=" return MULAS;
 "/=" return DIVAS;

@@ -3,8 +3,29 @@
 extern TreeNode * root;
 extern FILE* yyin;
 
+static Symbol::ValueType lastSeenType = Symbol::VALUE_NONE;
+//static Symbol::ValueType shouldBeType = Symbol::VALUE_NONE;
+
 void showTree(TreeNode* root) {
+
   if (root == nullptr) return;
+
+  auto children = root -> child;
+  while (children) {
+    showTree(children);
+    children = children -> sibling;
+  }
+  Symbol* ownSymbol = nullptr;
+
+  if (root->nodeType == TreeNode::NODE_EXPRESSION
+          || root->nodeType == TreeNode::NODE_DECLARATION) {
+      if (lastSeenType == Symbol::VALUE_NONE)
+          lastSeenType
+                  = static_cast<DeclarationNode*>(root)->symbol->type;
+  } else {
+      lastSeenType = Symbol::VALUE_NONE;
+  }
+
   cout << "(Line " << root -> lineno << ") " << root->nodeID << ": ";
   switch (root->nodeType) {
   case TreeNode::NODE_NONE:
@@ -58,37 +79,43 @@ void showTree(TreeNode* root) {
       // fall through
       [[clang::fallthrough]];
   case TreeNode::NODE_EXPRESSION:
-      if(root->nodeType == TreeNode::NODE_EXPRESSION) cout << "[Expression<";
-      switch (static_cast<DeclarationNode*>(root)->symbol->type) {
-      case Symbol::VALUE_CHAR:
-          cout << "char";
-          break;
-      case Symbol::VALUE_DOUBLE:
-          cout << "double";
-          break;
-      case Symbol::VALUE_INT:
-          cout << "int";
-          break;
-      case Symbol::VALUE_NONE:
-          cout << "unknown";
-          break;
-      case Symbol::VALUE_STRING:
-          cout << "string";
-          break;
-      case Symbol::VALUE_VOID:
-          cout << "void";
-          break;
+      if(root->nodeType == TreeNode::NODE_EXPRESSION)
+          cout << "[Expression<";
+
+      ownSymbol = static_cast<DeclarationNode*>(root)->symbol;
+      if (lastSeenType != ownSymbol->type) {
+          lastSeenType = ownSymbol->type = Symbol::VALUE_ERROR;
+          cout << "[error]";
       }
+
+      cout << Symbol::getSymbolName(ownSymbol);
+
       cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
       break;
   case TreeNode::NODE_OPERATOR:
+      ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
       cout << "[Operator ";
       cout << OperatorNode::getTypeStr(static_cast<OperatorNode*>(root)->type);
-      cout << "]";
+      cout << " <";
+      cout << Symbol::getSymbolName(ownSymbol);
+      cout << ">]";
+      switch (static_cast<OperatorNode*>(root)->type) {
+      case OperatorNode::OP_ASSIGN:
+      case OperatorNode::OP_ADDAS:
+      case OperatorNode::OP_SUBAS:
+      case OperatorNode::OP_MULAS:
+      case OperatorNode::OP_DIVAS:
+      case OperatorNode::OP_BORAS:
+      case OperatorNode::OP_BANDAS:
+      case OperatorNode::OP_BXORAS:
+          if (static_cast<ExprNode*>(root->child)->symbol->symbolType != Symbol::SYMBOL_VARIABLE)
+              cout << "[error] could not assign to lvalue";
+          break;
+      default: break;
+      }
       break;
-
   }
-  auto children = root -> child;
+  children = root -> child;
   if(children) {
     cout << endl << "\tChildren: ";
   }
@@ -98,10 +125,6 @@ void showTree(TreeNode* root) {
   }
   cout << endl;
   children = root -> child;
-  while (children) {
-    showTree(children);
-    children = children -> sibling;
-  }
 }
 
 int main(int argc, char *argv[])

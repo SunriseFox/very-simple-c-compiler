@@ -17,14 +17,18 @@ public /* types */:
         VALUE_INT,
         VALUE_DOUBLE,
         VALUE_STRING,
-        VALUE_CHAR
+        VALUE_CHAR,
+        VALUE_ERROR
     };
 
     enum SymbolType {
         SYMBOL_CONSTANT,
         SYMBOL_VARIABLE,
         SYMBOL_CALLABLE,
+        SYMBOL_OPNODE,
     };
+
+    static string getSymbolName(Symbol* s);
 
 public:
 
@@ -62,5 +66,12 @@ public:
 
 };
 
+class OpNode : public Symbol {
+
+public:
+
+    OpNode(ValueType type, string value);
+
+};
 
 #endif // + SYMBOL_H

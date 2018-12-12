@@ -85,8 +85,8 @@ string OperatorNode::getTypeStr(OperatorNode::OperatorType type)
     case OP_NOT: return "!";
     case OP_BREV: return "~";
 
-    case OP_LMOVE: return "<<";
-    case OP_RMOVE: return ">>";
+    case OP_LSHFT: return "<<";
+    case OP_RSHFT: return ">>";
 
     case OP_MUL: return "*";
     case OP_DIV: return "/";
@@ -111,6 +111,8 @@ string OperatorNode::getTypeStr(OperatorNode::OperatorType type)
     case OP_LAND: return "&&";
     case OP_LOR: return "||";
 
+    case OP_LSHFTAS: return "<<=";
+    case OP_RSHFTAS: return ">>=";
     case OP_MULAS: return "*=";
     case OP_DIVAS: return "/=";
     case OP_MODAS: return "%=";
@@ -125,8 +127,9 @@ string OperatorNode::getTypeStr(OperatorNode::OperatorType type)
 }
 
 OperatorNode::OperatorNode(int lineno, OperatorNode::OperatorType type, std::initializer_list<TreeNode *> children)
-    : TreeNode(lineno, NODE_OPERATOR), type(type)
+    : ExprNode (lineno, nullptr), type(type)
 {
+    nodeType = NODE_OPERATOR;
     for( auto elem : children )
         this->addChild(elem);
 }

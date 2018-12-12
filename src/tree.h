@@ -91,7 +91,7 @@ public:
     ~ExprNode() {}
 };
 
-class OperatorNode: public TreeNode {
+class OperatorNode: public ExprNode {
 
 public /* types */:
 
@@ -103,8 +103,8 @@ public /* types */:
         OP_NOT,
         OP_BREV,
 
-        OP_LMOVE,
-        OP_RMOVE,
+        OP_LSHFT,
+        OP_RSHFT,
 
         OP_MUL,
         OP_DIV,
@@ -129,6 +129,8 @@ public /* types */:
         OP_LAND,
         OP_LOR,
 
+        OP_LSHFTAS,
+        OP_RSHFTAS,
         OP_MULAS,
         OP_DIVAS,
         OP_MODAS,

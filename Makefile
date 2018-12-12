@@ -27,7 +27,7 @@ clean:
 	rm src/main.lex.yy.cpp src/main.tab.cpp src/main.tab.h src/main.output src/pch.h.gch $(TARGET) *.o -f
 
 test: ./main
-	./main test.txt > result.txt
+	./main test/test.txt > result.txt
 
 debug: lex
 	bison -o src/main.tab.cpp --defines=src/main.tab.h -vy src/main.y --debug --report=all

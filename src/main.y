@@ -28,7 +28,7 @@
 
 %token NOT BREV
 
-%token LMOVE RMOVE
+%token LSHFT RSHFT
 
 %token MUL DIV MOD
 
@@ -42,6 +42,7 @@
 
 %token QM COLON
 
+%token LSHFTAS RSHFTAS
 %token MULAS DIVAS MODAS
 %token ADDAS SUBAS BANDAS BXORAS BORAS ASSIGN
 
@@ -58,12 +59,12 @@
 
 %right COMMA
 %right NOT BREV
-%left LMOVE RMOVE
+%left LSHFT RSHFT
 %left MUL DIV MOD
 %left ADD SUB BAND BXOR BOR
 %left LESS LESSEQ MORE MOREEQ EQ NE
 %left LAND LOR
-%right MULAS DIVAS MODAS ADDAS SUBAS BANDAS BXORAS BORAS ASSIGN
+%right LSHFTAS RSHFTAS MULAS DIVAS MODAS ADDAS SUBAS BANDAS BXORAS BORAS ASSIGN
 %nonassoc IFX
 %right UMINUS UADD
 
@@ -225,6 +226,12 @@ expression  : assignment {
 assignment  : logical {
               $$ = $1;
             }
+            | node LSHFTAS logical {
+              $$ = new OperatorNode(lineno, OperatorNode::OP_LSHFTAS, {$1, $3});
+            }
+            | node RSHFTAS logical {
+              $$ = new OperatorNode(lineno, OperatorNode::OP_RSHFTAS, {$1, $3});
+            }
             | node MULAS logical {
               $$ = new OperatorNode(lineno, OperatorNode::OP_MULAS, {$1, $3});
             }
@@ -331,11 +338,11 @@ multiplicative  : bitshift  {
 bitshift        : bitbinary {
                   $$ = $1;
                 }
-                | bitshift LMOVE bitbinary {
-                  $$ = new OperatorNode(lineno, OperatorNode::OP_LMOVE, {$1, $3});
+                | bitshift LSHFT bitbinary {
+                  $$ = new OperatorNode(lineno, OperatorNode::OP_LSHFT, {$1, $3});
                 }
-                | bitshift RMOVE bitbinary {
-                  $$ = new OperatorNode(lineno, OperatorNode::OP_RMOVE, {$1, $3});
+                | bitshift RSHFT bitbinary {
+                  $$ = new OperatorNode(lineno, OperatorNode::OP_RSHFT, {$1, $3});
                 }
                 ;
 
