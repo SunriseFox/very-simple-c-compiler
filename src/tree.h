@@ -17,7 +17,8 @@ public /* types */:
         NODE_STATMENT,
         NODE_DECLARATION,
         NODE_EXPRESSION,
-        NODE_OPERATOR
+        NODE_OPERATOR,
+        NODE_FUNCCALL
     };
 
     static int _nodeID;
@@ -49,6 +50,7 @@ public /* types */:
         ST_NONE,
         ST_EMPTY,
         ST_SCOPE,
+        ST_RET,
         ST_DO_WHILE,
         ST_WHILE,
         ST_FOR,
@@ -91,6 +93,13 @@ public:
     ~ExprNode() {}
 };
 
+class FuncCallNode : public ExprNode {
+
+public:
+    FuncCallNode (int lineno, Symbol* symbol, std::initializer_list<TreeNode*> children);
+    ~FuncCallNode() {}
+};
+
 class OperatorNode: public ExprNode {
 
 public /* types */:
@@ -114,6 +123,8 @@ public /* types */:
         OP_SUB,
         OP_UADD,
         OP_USUB,
+
+        OP_TADDR,
 
         OP_BAND,
         OP_BXOR,
@@ -155,7 +166,7 @@ public:
 
 };
 
-class EmptyNode : public TreeNode {
+class EmptyNode : public StatementNode {
 
 public:
     EmptyNode(int lineno);

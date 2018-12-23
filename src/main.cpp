@@ -43,6 +43,9 @@ void showTree(TreeNode* root) {
       case StatementNode::ST_SCOPE:
           cout << "Scope";
           break;
+      case StatementNode::ST_RET:
+          cout << "Return";
+          break;
       case StatementNode::ST_DO_WHILE:
           cout << "Do-While";
           break;
@@ -73,6 +76,14 @@ void showTree(TreeNode* root) {
           break;
       }
       cout << "]";
+      break;
+
+  case TreeNode::NODE_FUNCCALL:
+      cout << "[FuncCall<";
+      ownSymbol = static_cast<DeclarationNode*>(root)->symbol;
+      cout << Symbol::getSymbolName(ownSymbol);
+      cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
+
       break;
   case TreeNode::NODE_DECLARATION:
       cout << "[Declaration<";
@@ -108,8 +119,10 @@ void showTree(TreeNode* root) {
       case OperatorNode::OP_BORAS:
       case OperatorNode::OP_BANDAS:
       case OperatorNode::OP_BXORAS:
+      case OperatorNode::OP_LSHFTAS:
+      case OperatorNode::OP_RSHFTAS:
           if (static_cast<ExprNode*>(root->child)->symbol->symbolType != Symbol::SYMBOL_VARIABLE)
-              cout << "[error] could not assign to lvalue";
+              cout << "[error] could only assign to lvalue";
           break;
       default: break;
       }
@@ -143,10 +156,13 @@ int main(int argc, char *argv[])
 #endif
   }
 
+  scope = new Scope();
+
   yyparse();
   while (root) {
     showTree(root);
     root = root -> sibling;
   }
+
   return 0;
 }

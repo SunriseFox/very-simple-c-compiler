@@ -14,4 +14,6 @@
 #include <string>
 #include <list>
 
+#include <map>
+
 #endif // + PCH_H

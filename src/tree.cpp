@@ -97,6 +97,8 @@ string OperatorNode::getTypeStr(OperatorNode::OperatorType type)
     case OP_UADD: return "+";
     case OP_USUB: return "-";
 
+    case OP_TADDR: return "&*";
+
     case OP_BAND: return "&";
     case OP_BXOR: return "^";
     case OP_BOR: return "|";
@@ -134,7 +136,14 @@ OperatorNode::OperatorNode(int lineno, OperatorNode::OperatorType type, std::ini
         this->addChild(elem);
 }
 
-EmptyNode::EmptyNode(int lineno) : TreeNode (lineno, NODE_NONE)
+EmptyNode::EmptyNode(int lineno) : StatementNode (lineno, ST_EMPTY)
 {
 
+}
+
+FuncCallNode::FuncCallNode(int lineno, Symbol *symbol, std::initializer_list<TreeNode *> children) : ExprNode (lineno, symbol)
+{
+    nodeType = NODE_FUNCCALL;
+    for( auto elem : children )
+        this->addChild(elem);
 }

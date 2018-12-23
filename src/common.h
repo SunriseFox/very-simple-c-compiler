@@ -2,6 +2,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "pch.h"
 
 using std::cout;
@@ -14,5 +16,10 @@ using std::list;
 #include "symbol.h"
 #include "scope.h"
 #include "main.tab.h"
+
+
+extern int lineno;
+extern TreeNode *root;
+extern Scope *scope;
 
 #endif // + COMMON_H

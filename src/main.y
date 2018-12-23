@@ -1,13 +1,10 @@
 
 %{
   #include "common.h"
-  extern int lineno;
-  TreeNode * root;
   Symbol::ValueType currentType = Symbol::VALUE_NONE;
 
   int yylex();
   int yyerror( char const* );
-  Scope scope;
 %}
 
 %union {
@@ -73,8 +70,8 @@
 %type <node> node
 %type <node> declaration id_list id_pair
 %type <node> expression assignment logical comparative additive multiplicative bitshift bitbinary postfix cast
-%type <node> if_condition if_else_condition for_statement while_statement do_while_statement  function_declaration_statement
-%type <node> statement program
+%type <node> if_condition if_else_condition for_statement while_statement do_while_statement return_statement function_declaration_statement
+%type <node> statement program_empty program
 %type <symbol> id_prefix
 
 // ---
@@ -83,22 +80,28 @@
 
 %%
 
-start : program {root = $1;}
-     ;
+start : program {
+    root = $1;
+  }
+  ;
 
 program : program statement {
-          ($1) -> addSibling($2);
-          $$ = $1;
-        }
-        | statement {
-          $$ = $1;
-        }
-        | LB RB {
-          $$ = new StatementNode(lineno, StatementNode::ST_SCOPE);
-        }
-        ;
+    ($1) -> addSibling($2);
+    $$ = $1;
+  }
+  | statement {
+    $$ = $1;
+  }
+  ;
 
-lb_scope  : LB { scope.pushScope(); }
+program_empty : program {
+    $$ = $1;
+  }
+  | %empty {
+    $$ = new EmptyNode(lineno);
+  }
+
+lb_scope  : LB { scope->pushScope(); }
           ;
 
 statement : expression SEMICOLON {
@@ -107,16 +110,16 @@ statement : expression SEMICOLON {
           | declaration SEMICOLON {
             $$ = $1;
           }
-          | SEMICOLON {
-            $$ = new StatementNode(lineno, StatementNode::ST_EMPTY);
-          }
           | lb_scope program RB {
             $$ = new StatementNode(lineno, StatementNode::ST_SCOPE);
             $$ -> addChild($2);
-            scope.popScope();
+            scope->popScope();
+          }
+          | return_statement {
+            $$ = $1;
           }
           | if_else_condition {
-              $$ = $1;
+            $$ = $1;
           }
           | if_condition {
             $$ = $1;
@@ -135,13 +138,9 @@ statement : expression SEMICOLON {
           }
           ;
 
-function_declaration_statement  : type IDENTIFIER LP RP LB program RB {
+function_declaration_statement  : type IDENTIFIER LP RP lb_scope program_empty RB {
                                   Callable* symbol = new Callable(currentType, *$2);
                                   $$ = new FuncStatementNode(lineno, symbol, {$6});
-                                }
-                                | type IDENTIFIER LP RP LB RB {
-                                  Callable* symbol = new Callable(currentType, *$2);
-                                  $$ = new FuncStatementNode(lineno, symbol);
                                 }
                                 ;
 
@@ -166,10 +165,14 @@ while_statement : K_WHILE LP expression RP statement {
                 ;
 
 do_while_statement  : K_DO lb_scope statement RB K_WHILE LP expression RP SEMICOLON {
-                  $$ = new StatementNode(lineno, StatementNode::ST_DO_WHILE, {$3, $7});
-                  scope.popScope();
-                }
+                    $$ = new StatementNode(lineno, StatementNode::ST_DO_WHILE, {$3, $7});
+                    scope->popScope();
+                  }
                 ;
+
+return_statement  : K_RET expression SEMICOLON {
+                    $$ = new StatementNode(lineno, StatementNode::ST_RET, {$2});
+                  }
 
 declaration : type id_list {
               $$ = $2;
@@ -203,7 +206,7 @@ id_pair   : id_prefix ASSIGN expression {
 
 id_prefix : IDENTIFIER {
             Symbol* symbol = new Variable(currentType, *$1);
-            bool ok = scope.insertSymbol(*$1, lineno, symbol);
+            bool ok = scope->insertSymbol(*$1, lineno, symbol);
             if (!ok)  {
               cerr << "Line " << lineno << ": symbol " << *$1 << " has already been declared." << endl;
               return -1;
@@ -214,9 +217,12 @@ id_prefix : IDENTIFIER {
 expression  : assignment {
               $$ = $1;
             }
+            | expression LP expression RP {
+              $$ = new  FuncCallNode(lineno, $1->symbol, {$3});
+            }
             | expression COMMA assignment {
               $1 -> addSibling($3);
-              $$ = $3;
+              $$ = $1;
             }
             | %empty {
               $$ = new EmptyNode(lineno);
@@ -366,6 +372,9 @@ postfix         : cast {
                 | DEC postfix {
                   $$ = new OperatorNode(lineno, OperatorNode::OP_DEC, {$2});
                 }
+                | BAND node {
+                  $$ = new OperatorNode(lineno, OperatorNode::OP_TADDR, {$2});
+                }
                 ;
 
 cast  : LP expression RP {
@@ -377,7 +386,7 @@ cast  : LP expression RP {
       ;
 
 node  : IDENTIFIER  {
-        auto symbol = scope.findSymbol(*$1);
+        auto symbol = scope->findSymbol(*$1);
         if (symbol == nullptr) {
           std::cerr << "Line " << lineno << ": symbol " << *$1 << " is not defined." << endl;
           return -1;

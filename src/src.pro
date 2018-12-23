@@ -9,7 +9,8 @@ SOURCES += \
     main.cpp \
     symbol.cpp \
     tree.cpp \
-    scope.cpp
+    scope.cpp \
+    utils.cpp
 
 HEADERS += \
     common.h \

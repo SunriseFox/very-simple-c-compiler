@@ -1,6 +1,5 @@
 
   #include "common.h"
-  int lineno = 1;
 
   string strip_string(const char* text, int start = 0, int end = 0) {
     string str = string(text + start);
@@ -24,7 +23,7 @@ RESERVED "enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"unsigned"
 
 %%
 
-{RESERVED} cout << endl << "reserved token: " << yytext << endl;
+{RESERVED} cerr << "[line " << lineno << "]" << "reserved token: " << yytext << endl;
 
 "auto" return T_AUTO;
 "int"|"bool"|"long" return T_INT;
@@ -143,13 +142,23 @@ RESERVED "enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"unsigned"
   yylval.symbol = new Constant(Constant::VALUE_DOUBLE, yytext);
   return SYMBOL;
 }
-{IDENTIFIER} yylval.value = new string(yytext); return IDENTIFIER;
+"scanf" {
+  yylval.symbol = new Callable(Constant::VALUE_INT, "scanf");
+  return SYMBOL;
+}
+"printf" {
+  yylval.symbol = new Callable(Constant::VALUE_INT, "printf");
+  return SYMBOL;
+}
+{IDENTIFIER} {
+  yylval.value = new string(yytext);
+  return IDENTIFIER;
+}
 
 {WHILTESPACE} /* do nothing */
 {EOL} lineno++;
 . {
-  cout << "unknown character " << yytext << endl;
-  exit(EXIT_FAILURE);
+  cerr << "[line " << lineno << "]" << "unknown character " << yytext << endl;
 }
 
 %%
