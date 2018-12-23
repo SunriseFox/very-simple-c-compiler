@@ -18,4 +18,5 @@ HEADERS += \
     symbol.h \
     tree.h \
     main.tab.h \
-    scope.h
+    scope.h \
+    utils.h

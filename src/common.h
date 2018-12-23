@@ -16,10 +16,6 @@ using std::list;
 #include "symbol.h"
 #include "scope.h"
 #include "main.tab.h"
-
-
-extern int lineno;
-extern TreeNode *root;
-extern Scope *scope;
+#include "utils.h"
 
 #endif // + COMMON_H
