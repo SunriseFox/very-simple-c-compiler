@@ -15,7 +15,7 @@
 
 // ---
 
-%token T_AUTO T_CHAR T_INT T_DOUBLE T_VOID T_STRING
+%token T_CHAR T_INT T_DOUBLE T_VOID T_STRING
 
 %token K_BREAK K_CASE K_CONTINUE K_DEFAULT K_DO K_ELSE K_FOR K_GOTO K_IF K_RET K_SWITCH K_WHILE
 
@@ -189,7 +189,6 @@ type  : T_INT { currentType = Symbol::VALUE_INT; }
       | T_STRING { currentType = Symbol::VALUE_STRING; }
       | T_DOUBLE { currentType = Symbol::VALUE_DOUBLE; }
       | T_VOID { currentType = Symbol::VALUE_VOID; }
-      | T_AUTO { currentType = Symbol::VALUE_NONE; }
       ;
 
 id_list : id_pair {

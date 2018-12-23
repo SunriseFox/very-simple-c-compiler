@@ -19,13 +19,12 @@ DOUBLE ([0-9]+)?(\.[0-9]+)([eE](\+|-)?[0-9]+)?
 
 IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 
-RESERVED "enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"unsigned"|"volatile"
+RESERVED "auto"|"enum"|"signed"|"sizeof"|"static"|"struct"|"typedef"|"union"|"unsigned"|"volatile"
 
 %%
 
 {RESERVED} cerr << "[line " << lineno << "]" << "reserved token: " << yytext << endl;
 
-"auto" return T_AUTO;
 "int"|"bool"|"long" return T_INT;
 "char" return T_CHAR;
 "string" return T_STRING;

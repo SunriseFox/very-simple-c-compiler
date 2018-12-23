@@ -1,3 +1,34 @@
-(Line 3) 1: [Statement Empty]
-(Line 3) 2: [Statement Function<main>]
-	Children: 1 
+(Line 2) 1: [Declaration<int> i] 
+(Line 2) 2: [Expression<int> 1] 
+(Line 2) 3: [Declaration<int> result] 
+	Children: 2 
+(Line 3) 5: [Expression<[error]error> %d] 
+(Line 3) 6: [Expression<[error]error> i] 
+(Line 3) 7: [Operator &* <error>]
+	Children: 6 
+(Line 3) 8: [FuncCall<int> scanf] 
+	Children: 5 7 
+(Line 5) 9: [Expression<error> i] 
+(Line 5) 10: [Expression<[error]error> 0] 
+(Line 5) 11: [Operator > <error>]
+	Children: 9 10 
+(Line 6) 12: [Expression<int> result] 
+(Line 6) 13: [Expression<[error]error> i] 
+(Line 6) 14: [Operator *= <int>]
+	Children: 12 13 
+(Line 7) 15: [Expression<error> i] 
+(Line 7) 16: [Operator -- <error>]
+	Children: 15 
+(Line 8) 17: [Statement Scope]
+	Children: 14 16 
+(Line 8) 18: [Statement While]
+	Children: 11 17 
+(Line 10) 20: [Expression<string> %d\n] 
+(Line 10) 21: [Expression<[error]error> result] 
+(Line 10) 22: [FuncCall<int> printf] 
+	Children: 20 21 
+(Line 11) 23: [Expression<int> 0] 
+(Line 11) 24: [Statement Return]
+	Children: 23 
+(Line 12) 25: [Statement Function<main>]
+	Children: 1 3 8 18 22 24 
