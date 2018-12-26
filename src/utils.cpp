@@ -12,6 +12,16 @@
 
 // 每个节点都应该有一个类型
 
+// 类型校对
+// 语法树转换
+
+// int currentOffset
+// map 符号 -> 符号对应地址
+
+// 语句 - 三地址码
+
+// 综合属性计算
+
 int lineno  = 1;
 
 TreeNode *root;

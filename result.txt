@@ -1,34 +1,41 @@
-(Line 2) 1: [Declaration<int> i] 
-(Line 2) 2: [Expression<int> 1] 
-(Line 2) 3: [Declaration<int> result] 
-	Children: 2 
-(Line 3) 5: [Expression<[error]error> %d] 
-(Line 3) 6: [Expression<[error]error> i] 
-(Line 3) 7: [Operator &* <error>]
+(Line 4) 1: [Declaration<int> i] 
+(Line 4) 2: [Expression<int> 1] 
+(Line 4) 3: [Expression<int> 1] 
+(Line 4) 4: [Operator + <int>]
+	Children: 2 3 
+(Line 4) 5: [Expression<int> 1] 
+(Line 4) 6: [Operator + <int>]
+	Children: 4 5 
+(Line 4) 7: [Declaration<int> result] 
 	Children: 6 
-(Line 3) 8: [FuncCall<int> scanf] 
-	Children: 5 7 
-(Line 5) 9: [Expression<error> i] 
-(Line 5) 10: [Expression<[error]error> 0] 
-(Line 5) 11: [Operator > <error>]
-	Children: 9 10 
-(Line 6) 12: [Expression<int> result] 
-(Line 6) 13: [Expression<[error]error> i] 
-(Line 6) 14: [Operator *= <int>]
-	Children: 12 13 
-(Line 7) 15: [Expression<error> i] 
-(Line 7) 16: [Operator -- <error>]
-	Children: 15 
-(Line 8) 17: [Statement Scope]
-	Children: 14 16 
-(Line 8) 18: [Statement While]
-	Children: 11 17 
-(Line 10) 20: [Expression<string> %d\n] 
-(Line 10) 21: [Expression<[error]error> result] 
-(Line 10) 22: [FuncCall<int> printf] 
-	Children: 20 21 
-(Line 11) 23: [Expression<int> 0] 
-(Line 11) 24: [Statement Return]
-	Children: 23 
-(Line 12) 25: [Statement Function<main>]
-	Children: 1 3 8 18 22 24 
+(Line 5) 9: [Expression<string> %d] 
+(Line 5) 10: [Expression<int> i] 
+(Line 5) 11: [Operator &* <int>]
+	Children: 10 
+(Line 5) 12: [FuncCall<int> scanf] 
+	Children: 9 11 
+(Line 7) 13: [Expression<int> i] 
+(Line 7) 14: [Expression<int> 0] 
+(Line 7) 15: [Operator > <int>]
+	Children: 13 14 
+(Line 8) 16: [Expression<int> result] 
+(Line 8) 17: [Expression<int> i] 
+(Line 8) 18: [Operator *= <int>]
+	Children: 16 17 
+(Line 9) 19: [Expression<int> i] 
+(Line 9) 20: [Operator -- <int>]
+	Children: 19 
+(Line 10) 21: [Statement Scope]
+	Children: 18 20 
+(Line 10) 22: [Statement While]
+	Children: 15 21 
+(Line 12) 24: [Expression<string> %d, %d\n] 
+(Line 12) 25: [Expression<int> i] 
+(Line 12) 26: [Expression<int> result] 
+(Line 12) 27: [FuncCall<int> printf] 
+	Children: 24 25 26 
+(Line 13) 28: [Expression<int> 0] 
+(Line 13) 29: [Statement Return]
+	Children: 28 
+(Line 14) 30: [Statement Function<main>]
+	Children: 1 7 12 22 27 29 
