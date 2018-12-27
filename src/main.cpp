@@ -72,8 +72,8 @@ void showTree(TreeNode* root) {
         ownSymbol = static_cast<DeclarationNode*>(root)->symbol;
         cout << Symbol::getSymbolName(ownSymbol);
         cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
-
         break;
+
     case TreeNode::NODE_DECLARATION:
         cout << "[Declaration<";
         // fall through
@@ -88,6 +88,7 @@ void showTree(TreeNode* root) {
 
         cout << "> " <<static_cast<DeclarationNode*>(root)->symbol->value << "] ";
         break;
+
     case TreeNode::NODE_OPERATOR:
         ownSymbol = root->symbol = new OpNode(root->child->symbol->type, "");
         cout << "[Operator ";
@@ -106,9 +107,6 @@ void showTree(TreeNode* root) {
         case OperatorNode::OP_BXORAS:
         case OperatorNode::OP_LSHFTAS:
         case OperatorNode::OP_RSHFTAS:
-            if (static_cast<ExprNode*>(root->child)->symbol->symbolType != Symbol::SYMBOL_VARIABLE)
-                cout << "[error] could only assign to lvalue";
-            break;
         default: break;
         }
         break;

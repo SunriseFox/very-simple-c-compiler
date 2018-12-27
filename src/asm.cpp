@@ -79,28 +79,10 @@ string get8RegName(int i) {
     return "unknown8reg";
 }
 
-string getTmp2Reg() {
+string getTmpReg(int size) {
     for (int i = 0; i < 14; i++) {
         if (!regUsed[i])
-            return get2RegName(i);
-    }
-    cerr << "no enough regs" << endl;
-    throw 0;
-}
-
-string getTmp4Reg() {
-    for (int i = 0; i < 14; i++) {
-        if (!regUsed[i])
-            return get4RegName(i);
-    }
-    cerr << "no enough regs" << endl;
-    throw 0;
-}
-
-string getTmp8Reg() {
-    for (int i = 0; i < 14; i++) {
-        if (!regUsed[i])
-            return get8RegName(i);
+            return size == 2 ? get2RegName(i) : (size == 4 ? get4RegName(i) : get8RegName(i));
     }
     cerr << "no enough regs" << endl;
     throw 0;
@@ -147,31 +129,9 @@ void releaseRegByName(const string& reg) {
     regUsed[num] = false;
 }
 
-string getUnused4Reg() {
-    for (int i = 0; i < 14; i++) {
-        if (!regUsed[i]) {
-            regUsed[i] = 1;
-            return get4RegName(i);
-        }
-    }
-    cerr << "no enough regs" << endl;
-    throw 0;
-}
-
-string getUnused8Reg() {
-    for (int i = 0; i < 14; i++) {
-        if (!regUsed[i]) {
-            regUsed[i] = 1;
-            return get8RegName(i);
-        }
-    }
-    cerr << "no enough regs" << endl;
-    throw 0;
-}
-
 string getSymbolMemory(Symbol* sym) {
     if (varDeclare[sym].size() == 0) {
-        cerr << "trying getting empty symbol " << sym << endl;
+        cerr << "++++++++ trying getting empty symbol " << sym << endl;
         throw 0;
     }
     return varDeclare[sym] + string("(%rip)");
@@ -237,7 +197,6 @@ void handleCodeBlock(TreeNode* node) {
     if (node->nodeType == TreeNode::NODE_STATMENT
             && static_cast<StatementNode*>(node)->type == StatementNode::ST_SCOPE) {
         node = node->child;
-        cerr << "got scope, child " << node << endl;
     }
     while (node) {
         generateCode(node);
@@ -268,7 +227,6 @@ void handleFuncCall(TreeNode* node) {
             of << "\tpushq\t" << op << ", " << get8RegName(argNums[i]) << "\n";
         }
         regUsed[argNums[i]] = true;
-        // 让 OP 有自己的类型
         if (op[0] == '$') {;
             of << "\tmovl\t" << op << ", " << get4RegName(argNums[i]) << "\n";
         } else if (children[i]->symbol->type == Symbol::VALUE_STRING) {
@@ -320,18 +278,31 @@ string handleExprNode(TreeNode* node) {
         string op = handleExprNode(child[0]);
 
         if (opType == OperatorNode::OP_TADDR) {
-            string reg = getTmp8Reg();
+            string reg = getTmpReg(8);
             of << "\tleaq\t" << op << ", " << reg << "\n";
             return reg;
+        } else if (opType == OperatorNode::OP_DEC) {
+            of << "\tdecl\t" << op << "\n";
+            return op;
+        } else if (opType == OperatorNode::OP_INC) {
+            of << "\tincl\t" << op << "\n";
+            return op;
         }
 
         string reg;
 
         if (getRegNum(op) == -1) { // 不是寄存器
-            reg = getTmp4Reg();
+            reg = getTmpReg(4);
             of << "\tmovl\t" << op << ", " << reg << "\n";
         } else {
             reg = op;
+        }
+
+        if (opType == OperatorNode::OP_NOT) {
+            of << "\ttestl\t" << reg << ", " << reg << "\n";
+            of << "\tsete\t" << get2RegName(getRegNum(reg)) << "\n";
+            of << "\tmovzbl\t"<< get2RegName(getRegNum(reg)) << ", " << reg << "\n";
+            return reg;
         }
 
         protectRegByName(reg);
@@ -339,6 +310,39 @@ string handleExprNode(TreeNode* node) {
         op = handleExprNode(child[1]);
         releaseRegByName(reg);
 
+        string target;
+
+        if(opType == OperatorNode::OP_LAND) {
+            string Lfail = getNextLabel();
+            string Lend = getNextLabel();
+            of << "\ttest\t" << reg << ", " << reg << "\n";
+            of << "\tje\t" << Lfail << "\n";
+            of << "\tmovl\t" << op << ", " << reg << "\n";
+            of << "\ttest\t" << reg << ", " << reg << "\n";
+            of << "\tje\t" << Lfail << "\n";
+            of << "\tmovl\t$1, " << reg << "\n";
+            of << "\tjmp\t" << Lend << "\n";
+            of << Lfail << ":\n";
+            of << "\tmovl\t$0, " << reg << "\n";
+            of << Lend << ":\n";
+            return reg;
+        } else if (opType == OperatorNode::OP_LOR) {
+            string L2 = getNextLabel();
+            string L3 = getNextLabel();
+            string Lend = getNextLabel();
+            of << "\ttest\t" << reg << ", " << reg << "\n";
+            of << "\tjne\t" << L2 << "\n";
+            of << "\tmovl\t" << op << ", " << reg << "\n";
+            of << "\ttest\t" << reg << ", " << reg << "\n";
+            of << "\tje\t" << L3 << "\n";
+            of << L2 << ":\n";
+            of << "\tmovl\t$1, " << reg << "\n";
+            of << "\tjmp\t" << Lend << "\n";
+            of << L3 << ":\n";
+            of << "\tmovl\t$0, " << reg << "\n";
+            of << Lend << ":\n";
+            return reg;
+        }
         switch (opType) {
         case OperatorNode::OP_ADD:
             of << "\taddl\t" << op << ", " << reg << "\n";
@@ -354,10 +358,25 @@ string handleExprNode(TreeNode* node) {
             of << "\tmovl\t" << reg << ", " << op << "\n";
             return "";
         case OperatorNode::OP_MORE:
-            string target = getTmp2Reg();
+        case OperatorNode::OP_MOREEQ:
+        case OperatorNode::OP_LESS:
+        case OperatorNode::OP_LESSEQ:
+            target = getTmpReg(2);
+            string what;
+            switch (opType) {
+            case OperatorNode::OP_MORE:
+                what = "le"; break;
+            case OperatorNode::OP_MOREEQ:
+                what = "l"; break;
+            case OperatorNode::OP_LESS:
+                what = "ge"; break;
+            case OperatorNode::OP_LESSEQ:
+                what = "g"; break;
+            default: break;
+            }
             of << "\tcmpl\t" << op << ", " << reg << "\n";
-            of << "\tsetle\t" << target << "\n";
-            reg = getTmp4Reg();
+            of << "\tset" << what << "\t" << target << "\n";
+            reg = getTmpReg(4);
             of << "\tmovzbl\t" << target << ", " << reg << "\n";
             return reg;
         }
@@ -421,6 +440,52 @@ void handleWhile(StatementNode* node) {
     of << "\tje\t" << LBlock << "\n";
 }
 
+void handleFor(StatementNode* node) {
+    TreeNode* st1 = node->child;
+    TreeNode* st2 = st1->sibling;
+    TreeNode* st3 = st2->sibling;
+    TreeNode* st4 = st3->sibling;
+
+    handleExprNode(st1);
+    string LFor = getNextLabel();
+    string LCondition = getNextLabel();
+    of << "\tjmp\t" << LCondition << "\n";
+
+    of << LFor << ":\n";
+    handleCodeBlock(st4);
+    handleExprNode(st3);
+
+    of << LCondition << ":\n";
+    string reg = handleExprNode(st2);
+    of << "\ttestl\t" << reg << ", " << reg << "\n";
+    of << "\tje\t" << LFor << "\n";
+}
+
+
+void handleIf(StatementNode* node) {
+    string LElse = getNextLabel();
+    string LEnd = getNextLabel();
+    string op = handleExprNode(node->child);
+
+    string reg;
+
+    if (getRegNum(op) == -1) { // 不是寄存器
+        reg = getTmpReg(4);
+        of << "\tmovl\t" << op << ", " << reg << "\n";
+    } else {
+        reg = op;
+    }
+
+    of << "\ttestl\t" << reg << ", " << reg << "\n";
+    of << "\tje\t" << LElse << "\n";
+    generateCode(node->child->sibling);
+    of << "\tjmp\t" << LEnd << "\n";
+
+    of << LElse << ":\n";
+    generateCode(node->child->sibling ? node->child->sibling->sibling : nullptr);
+    of << LEnd << ":\n";
+}
+
 void generateCode(TreeNode* node) {
     if (node == nullptr) return;
 
@@ -429,15 +494,22 @@ void generateCode(TreeNode* node) {
 
     if (node->nodeType == TreeNode::NODE_STATMENT) {
         StatementNode* stnode = static_cast<StatementNode*>(node);
-        if (stnode->type == StatementNode::ST_WHILE) {
+        if (stnode->type == StatementNode::ST_IF_ELSE
+                || stnode->type == StatementNode::ST_IF) {
+            handleIf(stnode);
+        } else if (stnode->type == StatementNode::ST_WHILE) {
             handleWhile(stnode);
-        } else if (stnode->type == StatementNode::ST_FUNCTION) {
+        } else if (stnode->type == StatementNode::ST_FOR) {
+            handleFor(stnode);
+        }  else if (stnode->type == StatementNode::ST_FUNCTION) {
             handleFunctionNode(node);
         } else if (stnode->type == StatementNode::ST_RET) {
             reg = handleExprNode(stnode->child);
             of << "\tmovl\t" << reg << ", %eax\n";
             of << "\tleave\n";
             of << "\tret\n";
+        } else if (static_cast<StatementNode*>(node)->type == StatementNode::ST_SCOPE) {
+            handleCodeBlock(node);
         }
     }
 
@@ -451,7 +523,7 @@ void generateCode(TreeNode* node) {
             of << "\tmovl\t" << reg << ", " << getSymbolMemory(ownSymbol) << "\n";
             return;
         case Symbol::VALUE_STRING:
-            static_cast<DeclarationNode*>(node)->symbol = node->child->symbol;
+            varDeclare[static_cast<DeclarationNode*>(node)->symbol] = varDeclare[node->child->symbol];
             return;
         default:
             cerr << "could not handle type" << endl;
@@ -493,7 +565,7 @@ void generateASM() {
         if (i.first->type != Symbol::VALUE_STRING) {
             int size = symbolSize(i.first);
             of << "\t.comm\t" << i.second << "," << size << "," << size << "\n";
-        } else {
+        } else if (i.second.substr(0, 4) == ".str") {
             constStr.push_back(i);
         }
         cerr << i.first->value << " " << i.second << endl;
@@ -504,7 +576,7 @@ void generateASM() {
     }
 
     for (const auto& i : constStr) {
-        of << "" << i.second << ":\n";
+        of << i.second << ":\n";
         of << "\t.string\t\"" << i.first->value << "\"\n";
     }
 

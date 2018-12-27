@@ -1,18 +1,23 @@
 int func() {
-  int i = 9 + 9;
-  return i;
+  int i = 8;
+  if (0 || 1)
+    return 1;
+  else
+    return 2;
 }
 
 int main() {
     int i, result = 1;
+    string t = "the result is:";
     scanf("%d", &i);
 
-    while (i > 0) {
-        result *= i;
-				i = i - 1;
+    int j = 1;
+
+    for (j; j <= i; ++j) {
+        result *= j;
     }
 
     int sth = func();
-    printf("%d, %d\n", result, sth);
+    printf("%s%d, %d\n", t, result, sth);
     return 0;
 }

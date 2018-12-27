@@ -1,53 +1,63 @@
-(Line 2) 1: [Expression<int> 9] 
-(Line 2) 2: [Expression<int> 9] 
-(Line 2) 3: [Operator + <int>]
-	Children: 1 2 
-(Line 2) 4: [Declaration<int> i] 
-	Children: 3 
-(Line 3) 5: [Expression<int> i] 
-(Line 3) 6: [Statement Return]
-	Children: 5 
-(Line 4) 7: [Statement Function<func>]
-	Children: 4 6 
-(Line 7) 8: [Declaration<int> i] 
-(Line 7) 9: [Expression<int> 1] 
-(Line 7) 10: [Declaration<int> result] 
-	Children: 9 
-(Line 8) 12: [Expression<string> %d] 
-(Line 8) 13: [Expression<int> i] 
-(Line 8) 14: [Operator &* <int>]
+(Line 2) 1: [Expression<int> 8] 
+(Line 2) 2: [Declaration<int> i] 
+	Children: 1 
+(Line 3) 3: [Expression<int> 0] 
+(Line 3) 4: [Expression<int> 1] 
+(Line 3) 5: [Operator || <int>]
+	Children: 3 4 
+(Line 4) 6: [Expression<int> 1] 
+(Line 4) 7: [Statement Return]
+	Children: 6 
+(Line 6) 8: [Expression<int> 2] 
+(Line 6) 9: [Statement Return]
+	Children: 8 
+(Line 6) 10: [Statement If-Else]
+	Children: 5 7 9 
+(Line 7) 11: [Statement Function<func>]
+	Children: 2 10 
+(Line 10) 12: [Declaration<int> i] 
+(Line 10) 13: [Expression<int> 1] 
+(Line 10) 14: [Declaration<int> result] 
 	Children: 13 
-(Line 8) 15: [FuncCall<int> scanf] 
-	Children: 12 14 
-(Line 10) 16: [Expression<int> i] 
-(Line 10) 17: [Expression<int> 0] 
-(Line 10) 18: [Operator > <int>]
-	Children: 16 17 
-(Line 11) 20: [Expression<int> i] 
-(Line 11) 19: [Expression<int> result] 
-(Line 11) 21: [Operator *= <int>]
-	Children: 20 19 
-(Line 12) 23: [Expression<int> i] 
-(Line 12) 24: [Expression<int> 1] 
-(Line 12) 25: [Operator - <int>]
-	Children: 23 24 
-(Line 12) 22: [Expression<int> i] 
-(Line 12) 26: [Operator = <int>][error] could only assign to lvalue
-	Children: 25 22 
-(Line 13) 27: [Statement Scope]
-	Children: 21 26 
-(Line 13) 28: [Statement While]
-	Children: 18 27 
-(Line 15) 31: [FuncCall<int> func] 
-(Line 15) 32: [Declaration<int> sth] 
-	Children: 31 
-(Line 16) 34: [Expression<string> %d, %d\n] 
-(Line 16) 35: [Expression<int> result] 
-(Line 16) 36: [Expression<int> sth] 
-(Line 16) 37: [FuncCall<int> printf] 
-	Children: 34 35 36 
-(Line 17) 38: [Expression<int> 0] 
-(Line 17) 39: [Statement Return]
-	Children: 38 
-(Line 18) 40: [Statement Function<main>]
-	Children: 8 10 15 28 32 37 39 
+(Line 11) 15: [Expression<string> the result is:] 
+(Line 11) 16: [Declaration<string> t] 
+	Children: 15 
+(Line 12) 18: [Expression<string> %d] 
+(Line 12) 19: [Expression<int> i] 
+(Line 12) 20: [Operator &* <int>]
+	Children: 19 
+(Line 12) 21: [FuncCall<int> scanf] 
+	Children: 18 20 
+(Line 14) 22: [Expression<int> 1] 
+(Line 14) 23: [Declaration<int> j] 
+	Children: 22 
+(Line 16) 24: [Expression<int> j] 
+(Line 16) 25: [Expression<int> j] 
+(Line 16) 26: [Expression<int> i] 
+(Line 16) 27: [Operator <= <int>]
+	Children: 25 26 
+(Line 16) 28: [Expression<int> j] 
+(Line 16) 29: [Operator ++ <int>]
+	Children: 28 
+(Line 17) 31: [Expression<int> j] 
+(Line 17) 30: [Expression<int> result] 
+(Line 17) 32: [Operator *= <int>]
+	Children: 31 30 
+(Line 18) 33: [Statement Scope]
+	Children: 32 
+(Line 18) 34: [Statement For]
+	Children: 24 27 29 33 
+(Line 20) 37: [FuncCall<int> func] 
+(Line 20) 38: [Declaration<int> sth] 
+	Children: 37 
+(Line 21) 40: [Expression<string> %s%d, %d\n] 
+(Line 21) 41: [Expression<string> t] 
+(Line 21) 42: [Expression<int> result] 
+(Line 21) 43: [Expression<int> sth] 
+(Line 21) 44: [FuncCall<int> printf] 
+	Children: 40 41 42 43 
+(Line 22) 45: [Expression<int> 0] 
+(Line 22) 46: [Statement Return]
+	Children: 45 
+(Line 23) 47: [Statement Function<main>]
+	Children: 12 14 16 21 23 34 38 44 46 

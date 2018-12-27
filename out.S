@@ -3,22 +3,45 @@
 	.comm	temp0,4,4
 	.comm	temp1,4,4
 	.comm	temp2,4,4
-	.comm	temp4,4,4
+	.comm	temp6,4,4
+	.comm	temp7,4,4
 	.section	.rodata
-.str3:
-	.string	"%d"
+.str4:
+	.string	"the result is:"
 .str5:
-	.string	"%d, %d\n"
+	.string	"%d"
+.str8:
+	.string	"%s%d, %d\n"
 	.text
 	.globl	func
 	.type	func, @function
 func:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	movl	$9, %eax
-	addl	$9, %eax
-	movl	%eax, temp0(%rip)
-	movl	temp0(%rip), %eax
+	movl	$8, temp0(%rip)
+	movl	$0, %eax
+	test	%eax, %eax
+	jne	.L2
+	movl	$1, %eax
+	test	%eax, %eax
+	je	.L3
+.L2:
+	movl	$1, %eax
+	jmp	.L4
+.L3:
+	movl	$0, %eax
+.L4:
+	testl	%eax, %eax
+	je	.L0
+	movl	$1, %eax
+	leave
+	ret
+	jmp	.L1
+.L0:
+	movl	$2, %eax
+	leave
+	ret
+.L1:
 	leave
 	ret
 	.size	func, .-func
@@ -28,30 +51,30 @@ main:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	movl	$1, temp2(%rip)
-	leaq	.str3(%rip), %rdi
+	leaq	.str5(%rip), %rdi
 	leaq	temp1(%rip), %rax
 	movq	%rax, %rsi
 	call	__isoc99_scanf@PLT
-	jmp	.L0
-.L1:
-	movl	temp1(%rip), %eax
+	movl	$1, temp6(%rip)
+	jmp	.L6
+.L5:
+	movl	temp6(%rip), %eax
 	imull	temp2(%rip), %eax
 	movl	%eax, temp2(%rip)
-	movl	temp1(%rip), %eax
-	subl	$1, %eax
-	movl	%eax, temp1(%rip)
-.L0:
-	movl	temp1(%rip), %eax
-	cmpl	$0, %eax
-	setle	%al
+	incl	temp6(%rip)
+.L6:
+	movl	temp6(%rip), %eax
+	cmpl	temp1(%rip), %eax
+	setg	%al
 	movzbl	%al, %eax
 	testl	%eax, %eax
-	je	.L1
+	je	.L5
 	call	func
-	movl	%eax, temp4(%rip)
-	leaq	.str5(%rip), %rdi
-	movq	temp2(%rip), %rsi
-	movq	temp4(%rip), %rdx
+	movl	%eax, temp7(%rip)
+	leaq	.str8(%rip), %rdi
+	leaq	.str4(%rip), %rsi
+	movq	temp2(%rip), %rdx
+	movq	temp7(%rip), %rcx
 	call	printf@PLT
 	movl	$0, %eax
 	leave
