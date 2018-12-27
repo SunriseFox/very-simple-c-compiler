@@ -1,14 +1,18 @@
-
+int func() {
+  int i = 9 + 9;
+  return i;
+}
 
 int main() {
-    int i, result = 1 + 1 + 1;
+    int i, result = 1;
     scanf("%d", &i);
 
     while (i > 0) {
         result *= i;
-				--i;
+				i = i - 1;
     }
 
-    printf("%d, %d\n", i, result);
+    int sth = func();
+    printf("%d, %d\n", result, sth);
     return 0;
 }

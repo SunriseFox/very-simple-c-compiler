@@ -12,6 +12,9 @@ TreeNode::TreeNode(int lineno, NodeType type)
 
 void TreeNode::addChild(TreeNode *node)
 {
+    if (node == nullptr
+            || (node->nodeType == NODE_STATMENT
+                && static_cast<StatementNode*>(node)->type == StatementNode::StatementNode::ST_EMPTY)) return;
     if (child == nullptr) {
         child = node;
         return;

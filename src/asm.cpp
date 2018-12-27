@@ -9,6 +9,8 @@ using namespace std;
 static map<Symbol*, string> varDeclare;
 static int tempVarCount = 0;
 
+static int labelCount = 0;
+
 extern TreeNode* root;
 
 static std::ofstream of;
@@ -16,6 +18,26 @@ static std::ofstream of;
 enum {A, B, C, D, SI, DI, R8, R9, R10, R11, R12, R13, R14, R15};
 
 static bool regUsed[14] = {false};
+
+string get2RegName(int i) {
+    switch (i) {
+    case 0: return "%al";
+    case 1: return "%bl";
+    case 2: return "%cl";
+    case 3: return "%dl";
+    case 4: return "%sil";
+    case 5: return "%dil";
+    case 6: return "%r8b";
+    case 7: return "%r9b";
+    case 8: return "%r10b";
+    case 9: return "%r11b";
+    case 10: return "%r12b";
+    case 11: return "%r13b";
+    case 12: return "%r14b";
+    case 13: return "%r15b";
+    }
+    return "unknown4reg";
+}
 
 string get4RegName(int i) {
     switch (i) {
@@ -57,6 +79,15 @@ string get8RegName(int i) {
     return "unknown8reg";
 }
 
+string getTmp2Reg() {
+    for (int i = 0; i < 14; i++) {
+        if (!regUsed[i])
+            return get2RegName(i);
+    }
+    cerr << "no enough regs" << endl;
+    throw 0;
+}
+
 string getTmp4Reg() {
     for (int i = 0; i < 14; i++) {
         if (!regUsed[i])
@@ -73,6 +104,47 @@ string getTmp8Reg() {
     }
     cerr << "no enough regs" << endl;
     throw 0;
+}
+
+int getRegNum(const string& reg) {
+
+    if (reg.size() > 0 && reg.at(0) != '%')
+        return -1;
+
+    string tmp;
+    if (reg.find("ax") != string::npos || reg.find("al") != string::npos) return 0;
+    if (reg.find("bx") != string::npos || reg.find("bl") != string::npos) return 1;
+    if (reg.find("cx") != string::npos || reg.find("cl") != string::npos) return 2;
+    if (reg.find("dx") != string::npos || reg.find("dl") != string::npos) return 3;
+
+    if (reg.find("si") != string::npos) return 4;
+    if (reg.find("di") != string::npos) return 5;
+
+    if (reg.find("8") != string::npos) return 6;
+    if (reg.find("9") != string::npos) return 7;
+    if (reg.find("10") != string::npos) return 8;
+    if (reg.find("11") != string::npos) return 9;
+    if (reg.find("12") != string::npos) return 10;
+    if (reg.find("13") != string::npos) return 11;
+    if (reg.find("14") != string::npos) return 12;
+    if (reg.find("15") != string::npos) return 13;
+
+    cerr << "unknown reg" << endl;
+    throw 0;
+}
+
+void protectRegByName(const string& reg) {
+    int num = getRegNum(reg);
+    if (num < 0) return;
+
+    regUsed[num] = true;
+}
+
+void releaseRegByName(const string& reg) {
+    int num = getRegNum(reg);
+    if (num < 0) return;
+
+    regUsed[num] = false;
 }
 
 string getUnused4Reg() {
@@ -103,6 +175,10 @@ string getSymbolMemory(Symbol* sym) {
         throw 0;
     }
     return varDeclare[sym] + string("(%rip)");
+}
+
+string getNextLabel() {
+    return string(".L") + to_string(labelCount++);
 }
 
 void storeVar(TreeNode* node) {
@@ -154,6 +230,68 @@ int symbolSize(Symbol* const & sym) {
     return 0;
 }
 
+void generateCode(TreeNode* node);
+string handleExprNode(TreeNode* node);
+
+void handleCodeBlock(TreeNode* node) {
+    if (node->nodeType == TreeNode::NODE_STATMENT
+            && static_cast<StatementNode*>(node)->type == StatementNode::ST_SCOPE) {
+        node = node->child;
+        cerr << "got scope, child " << node << endl;
+    }
+    while (node) {
+        generateCode(node);
+        node = node -> sibling;
+    }
+}
+
+void handleFuncCall(TreeNode* node) {
+    vector<ExprNode*> children;
+    ExprNode* child = static_cast<ExprNode*>(node->child);
+    while (child) {
+        children.push_back(child);
+        child = static_cast<ExprNode*>(child->sibling);
+    }
+    string op;
+    int argNums[]{5, 4, 3, 2, 6, 7};
+    bool originalRegState[14];
+    for (int i = 0; i < 14; i++) {
+        originalRegState[i] = regUsed[i];
+    }
+    for (size_t i = 0; i < children.size(); i++) {
+        if (i >= 6) {
+            cerr << "ignoring " << i << "th args" << endl;
+            continue;
+        }
+        op = handleExprNode(children[i]);
+        if (regUsed[argNums[i]]) {
+            of << "\tpushq\t" << op << ", " << get8RegName(argNums[i]) << "\n";
+        }
+        regUsed[argNums[i]] = true;
+        // 让 OP 有自己的类型
+        if (op[0] == '$') {;
+            of << "\tmovl\t" << op << ", " << get4RegName(argNums[i]) << "\n";
+        } else if (children[i]->symbol->type == Symbol::VALUE_STRING) {
+            of << "\tleaq\t" << op << ", "  << get8RegName(argNums[i]) << "\n";
+        } else {
+            of << "\tmovq\t" << op << ", "  << get8RegName(argNums[i]) << "\n";
+        }
+    }
+    string funcName = static_cast<DeclarationNode*>(node)->symbol->value;
+    cerr << "-- funccall" << funcName << endl;
+    if (funcName == "scanf")
+        funcName = "__isoc99_scanf@PLT";
+    else if (funcName == "printf")
+        funcName = "printf@PLT";
+    of << "\tcall\t" << funcName << "\n";
+    for (int i = 0; i < 14; i++) {
+        regUsed[i] = originalRegState[i];
+        if (regUsed[i]) {
+            of << "\tpop\t" << op << get8RegName(argNums[i]) << "\n";
+        }
+    }
+}
+
 string handleExprNode(TreeNode* node) {
     Symbol* ownSymbol = static_cast<ExprNode*>(node)->symbol;
     cerr << "symbol is: " << ownSymbol << ", " << ownSymbol->value << endl;
@@ -177,30 +315,59 @@ string handleExprNode(TreeNode* node) {
         child[1] = child[0] ? child[0]->sibling : nullptr;
         child[2] = child[1] ? child[1]->sibling : nullptr;
 
-        string reg = getTmp4Reg();
+        auto opType = static_cast<OperatorNode*>(node)->type;
 
         string op = handleExprNode(child[0]);
 
-        auto opType = static_cast<OperatorNode*>(node)->type;
-
         if (opType == OperatorNode::OP_TADDR) {
-            reg = getTmp8Reg();
+            string reg = getTmp8Reg();
             of << "\tleaq\t" << op << ", " << reg << "\n";
             return reg;
         }
 
-        if (op != reg) {
+        string reg;
+
+        if (getRegNum(op) == -1) { // 不是寄存器
+            reg = getTmp4Reg();
             of << "\tmovl\t" << op << ", " << reg << "\n";
+        } else {
+            reg = op;
         }
+
+        protectRegByName(reg);
+
+        op = handleExprNode(child[1]);
+        releaseRegByName(reg);
 
         switch (opType) {
         case OperatorNode::OP_ADD:
-            op = handleExprNode(child[1]);
             of << "\taddl\t" << op << ", " << reg << "\n";
             return reg;
+        case OperatorNode::OP_SUB:
+            of << "\tsubl\t" << op << ", " << reg << "\n";
+            return reg;
+        case OperatorNode::OP_ASSIGN:
+            of << "\tmovl\t" << reg << ", " << op << "\n";
+            return reg;
+        case OperatorNode::OP_MULAS:
+            of << "\timull\t" << op << ", " << reg << "\n";
+            of << "\tmovl\t" << reg << ", " << op << "\n";
+            return "";
+        case OperatorNode::OP_MORE:
+            string target = getTmp2Reg();
+            of << "\tcmpl\t" << op << ", " << reg << "\n";
+            of << "\tsetle\t" << target << "\n";
+            reg = getTmp4Reg();
+            of << "\tmovzbl\t" << target << ", " << reg << "\n";
+            return reg;
         }
-
+        cerr << "++++ operator not handled" << endl;
         return getSymbolMemory(ownSymbol);
+    }
+
+    if (node->nodeType == TreeNode::NODE_FUNCCALL) {
+        handleFuncCall(node);
+        return "%eax";
     }
 
     return "";
@@ -215,32 +382,66 @@ void handleFunctionNode(TreeNode* node) {
     of << "\tmovq\t%rsp, %rbp\n";
 
     auto children = node -> child;
-    while (children) {
-        void generateCode(TreeNode* node);
-        generateCode(children);
-        children = children -> sibling;
+
+    handleCodeBlock(children);
+
+    while (true) {
+        if (children->sibling != nullptr)
+            children = children->sibling;
+        else break;
     }
 
-    of << "\tleave\n";
-    of << "\tret\n";
+    if (children->nodeType == TreeNode::NODE_STATMENT
+            && static_cast<StatementNode*>(children)->type == StatementNode::ST_RET) {
+
+    } else {
+        if (ownSymbol->value == "main") {
+            of << "\tmovl $0, %eax\n";
+        }
+        of << "\tleave\n";
+        of << "\tret\n";
+    }
+    of << "\t.size\t"<< ownSymbol->value <<", .-"<< ownSymbol->value <<"\n";
+}
+
+void handleWhile(StatementNode* node) {
+    string LCondition = getNextLabel();
+
+    of << "\tjmp\t" << LCondition << "\n";
+
+    string LBlock = getNextLabel();
+
+    of << LBlock << ":\n";
+
+    handleCodeBlock(node->child->sibling);
+
+    of << LCondition << ":\n";
+    string reg = handleExprNode(node->child);
+    of << "\ttestl\t" << reg << ", " << reg << "\n";
+    of << "\tje\t" << LBlock << "\n";
 }
 
 void generateCode(TreeNode* node) {
     if (node == nullptr) return;
 
     Symbol* ownSymbol = nullptr;
+    string reg;
 
     if (node->nodeType == TreeNode::NODE_STATMENT) {
-        auto ownType = static_cast<StatementNode*>(node)->type;
-        if (ownType == StatementNode::ST_FUNCTION) {
+        StatementNode* stnode = static_cast<StatementNode*>(node);
+        if (stnode->type == StatementNode::ST_WHILE) {
+            handleWhile(stnode);
+        } else if (stnode->type == StatementNode::ST_FUNCTION) {
             handleFunctionNode(node);
-            return;
+        } else if (stnode->type == StatementNode::ST_RET) {
+            reg = handleExprNode(stnode->child);
+            of << "\tmovl\t" << reg << ", %eax\n";
+            of << "\tleave\n";
+            of << "\tret\n";
         }
     }
 
-    string reg;
-
-    if (node->nodeType == TreeNode::NODE_DECLARATION) {
+    else if (node->nodeType == TreeNode::NODE_DECLARATION) {
         ownSymbol = static_cast<DeclarationNode*>(node)->symbol;
         if (!node->child) return;
         switch (ownSymbol->type) {
@@ -258,50 +459,17 @@ void generateCode(TreeNode* node) {
         }
     }
 
-    if (node->nodeType == TreeNode::NODE_FUNCCALL) {
-        vector<ExprNode*> children;
-        ExprNode* child = static_cast<ExprNode*>(node->child);
-        while (child) {
-            children.push_back(child);
-            child = static_cast<ExprNode*>(child->sibling);
-        }
-        string op;
-        int argNums[]{5, 4, 3, 2, 6, 7};
-        bool originalRegState[14];
-        for (int i = 0; i < 14; i++) {
-            originalRegState[i] = regUsed[i];
-        }
-        for (size_t i = 0; i < children.size(); i++) {
-            if (i >= 6) {
-                cerr << "ignoring " << i << "th args" << endl;
-                continue;
-            }
-            op = handleExprNode(children[i]);
-            if (regUsed[argNums[i]]) {
-                of << "\tpushq\t" << op << ", " << get8RegName(argNums[i]) << "\n";
-            }
-            regUsed[argNums[i]] = true;
-            // 让 OP 有自己的类型
-            if (op[0] == '$') {;
-                of << "\tmovl\t" << op << ", " << get4RegName(argNums[i]) << "\n";
-            } else if (children[i]->symbol->type == Symbol::VALUE_STRING) {
-                of << "\tleaq\t" << op << ", "  << get8RegName(argNums[i]) << "\n";
-            } else {
-                of << "\tmovq\t" << op << ", "  << get8RegName(argNums[i]) << "\n";
-            }
-        }
-        string funcName = static_cast<DeclarationNode*>(node)->symbol->value;
-        if (funcName == "scanf")
-            funcName = "__isoc99_scanf@PLT";
-        else if (funcName == "printf")
-            funcName = "printf@PLT";
-        of << "\tcall\t" << funcName << "\n";
-        for (int i = 0; i < 14; i++) {
-            regUsed[i] = originalRegState[i];
-            if (regUsed[i]) {
-                of << "\tpop\t" << op << get8RegName(argNums[i]) << "\n";
-            }
-        }
+    else if (node->nodeType == TreeNode::NODE_FUNCCALL) {
+        handleFuncCall(node);
+    }
+
+    else if (node->nodeType == TreeNode::NODE_OPERATOR
+             || node->nodeType == TreeNode::NODE_EXPRESSION) {
+        handleExprNode(node);
+    }
+
+    else {
+        cerr << "+++++ ignoring node !" << endl;
     }
 }
 
@@ -342,11 +510,8 @@ void generateASM() {
 
     putLine(".text");
 
-    temp = root;
+    handleCodeBlock(root);
 
-    while (temp) {
-        generateCode(temp);
-        temp = temp -> sibling;
-    }
-
+    of << "\t.ident\t\"Vampire very-simple-c-compiler\"\n";
+    of << "\t.section\t.note.GNU-stack,\"\",@progbits\n";
 }

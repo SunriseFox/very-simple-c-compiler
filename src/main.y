@@ -143,6 +143,7 @@ statement : expression SEMICOLON {
 
 function_declaration_statement : type IDENTIFIER LP RP lb_scope program_empty RB {
     Callable* symbol = new Callable(currentType, *$2);
+    scope->insertSymbol(*$2, lineno, symbol);
     currFunc = symbol;
     $$ = new FuncStatementNode(lineno, symbol, {$6});
   }
@@ -224,7 +225,7 @@ expression : assignment {
     $$ = $1;
   }
   | expression LP expression RP {
-    $$ = new  FuncCallNode(lineno, $1->symbol, {$3});
+    $$ = new FuncCallNode(lineno, $1->symbol, {$3});
   }
   | expression COMMA assignment {
     $1 -> addSibling($3);
@@ -239,37 +240,37 @@ assignment : logical {
     $$ = $1;
   }
   | node LSHFTAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_LSHFTAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_LSHFTAS, {$3, $1});
   }
   | node RSHFTAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_RSHFTAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_RSHFTAS, {$3, $1});
   }
   | node MULAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_MULAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_MULAS, {$3, $1});
   }
   | node DIVAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_DIVAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_DIVAS, {$3, $1});
   }
   | node MODAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_MODAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_MODAS, {$3, $1});
   }
   | node ADDAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_ADDAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_ADDAS, {$3, $1});
   }
   | node SUBAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_ADDAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_ADDAS, {$3, $1});
   }
   | node BANDAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_BANDAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_BANDAS, {$3, $1});
   }
   | node BXORAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_BXORAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_BXORAS, {$3, $1});
   }
   | node BORAS logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_BORAS, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_BORAS, {$3, $1});
   }
   | node ASSIGN logical {
-    $$ = new OperatorNode(lineno, OperatorNode::OP_ASSIGN, {$1, $3});
+    $$ = new OperatorNode(lineno, OperatorNode::OP_ASSIGN, {$3, $1});
   }
 ;
 
